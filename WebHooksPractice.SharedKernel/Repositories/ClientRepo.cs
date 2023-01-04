@@ -20,5 +20,22 @@ INSERT INTO clients  (ClientName, HandlerUrl,Id)
 VALUES (@ClientName, @HandlerUrl, @Id)";
             return await RunCommand(sql, request);
         }
+
+        public async Task<Client> GetClient(Guid clientId)
+        {
+            var sql = $@"
+SELECT HandlerUrl,Id FROM clients
+WHERE Id = @clientId
+";
+            var resp= await RunQuery<Client>(sql, new { clientId });
+
+            if (resp == null || !resp.Any()) 
+                throw new ClientDoesNotExistException();
+
+            return resp.First();
+        }
+
+
+        public class ClientDoesNotExistException: Exception {}
     }
 }

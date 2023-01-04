@@ -1,7 +1,5 @@
 using MediatR;
-using System.Reflection;
 using Webhooks.Provider.Api.Infrastructure.Extensions;
-using WebHooks.SharedKernel.Commands;
 
 var builder = WebApplication.CreateBuilder(args);
 var services = builder.Services;
@@ -10,8 +8,8 @@ var services = builder.Services;
 services.AddAppConfigParams(builder.Configuration);
 services.AddRepositories();
 services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-//services.AddMediatR(AppDomain.CurrentDomain.GetAssemblies());
-services.AddMediatR(typeof(RegisterClient.Handler));
+services.AddMediatR(AppDomain.CurrentDomain.GetAssemblies());
+
 services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 services.AddEndpointsApiExplorer();
