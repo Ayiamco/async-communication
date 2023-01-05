@@ -9,7 +9,7 @@ namespace Webhooks.Provider.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ClientController : ControllerBase
+    public class ClientController : BaseController
     {
         private readonly IMediator mediator;
         private readonly ILogger<ClientController> logger;
@@ -36,7 +36,7 @@ namespace Webhooks.Provider.Api.Controllers
         }
 
         [HttpPost("transfer")]
-        public async Task<IActionResult> Transfer(TransferCash.Command command, CancellationToken cancellationToken)
+        public async Task<IActionResult> Transfer(TransferCash.TfCommand command, CancellationToken cancellationToken)
         {
             try
             {
@@ -49,21 +49,6 @@ namespace Webhooks.Provider.Api.Controllers
             }
         }
 
-        public IActionResult GetResponse<TResponse>(TResponse response ) where TResponse: ApiResponse
-        {
-            switch (response.StatusCode)
-            {
-                case HttpStatusCode.OK:
-                    return Ok(response);
-                case HttpStatusCode.NotFound:
-                    return NotFound(Response);
-                case HttpStatusCode.Accepted:
-                    return Accepted(response);
-                case HttpStatusCode.Created:
-                    return Ok(response);
-                default:
-                    throw new Exception($"Statuscode: {response.StatusCode}  not handled in {nameof(GetResponse)} function.");
-            }
-        }
+      
     }
 }

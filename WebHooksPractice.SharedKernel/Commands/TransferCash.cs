@@ -15,7 +15,7 @@ namespace WebHooks.SharedKernel.Commands
 {
     public static class TransferCash
     {
-        public class Command:IRequest<Response>
+        public class TfCommand :IRequest<TfResponse>
         {
             public decimal Amount { get; set; }
 
@@ -32,9 +32,9 @@ namespace WebHooks.SharedKernel.Commands
             public Guid ClientId { get; set; }
         }
 
-        public class Response : ApiResponse { }
+        public class TfResponse : ApiResponse { }
 
-        public class Handler : IRequestHandler<Command, Response>
+        public class Handler : IRequestHandler<TfCommand, TfResponse>
         {
             private readonly ILogger<Handler> logger;
             private readonly IClientRepo clientRepo;
@@ -45,13 +45,13 @@ namespace WebHooks.SharedKernel.Commands
                 this.clientRepo = clientRepo;
             }
 
-            public async Task<Response> Handle(Command request, CancellationToken cancellationToken) 
+            public async Task<TfResponse> Handle(TfCommand request, CancellationToken cancellationToken) 
             {
                 try
                 {
                     await clientRepo.GetClient(request.ClientId);
                     //TODO: Push request to queue
-                    return new Response
+                    return new TfResponse
                     {
                         StatusCode = HttpStatusCode.Accepted,
                         Message = "Transfer request is being proccessed."
@@ -60,7 +60,7 @@ namespace WebHooks.SharedKernel.Commands
                 catch(ClientDoesNotExistException)
                 {
                     logger.LogError($"ClientId {request.ClientId} was not found");
-                    return new Response
+                    return new TfResponse
                     { 
                         StatusCode = HttpStatusCode.BadRequest ,
                         ErrorMessage= "ClientId does not exist"
