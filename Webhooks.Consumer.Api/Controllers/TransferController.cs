@@ -18,7 +18,7 @@ namespace Webhooks.Consumer.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(decimal amt)
         {
           var resp = await  apiClients.TransferCash(new TransferCash.TfCommand
                     {
@@ -27,7 +27,8 @@ namespace Webhooks.Consumer.Api.Controllers
                         TransactionRef = "ghgvhj",
                         ReceiverBankCode = "678",
                         SenderAccountNumber = "1234567890",
-                        ReceiverAccountNumber = "123456790"
+                        ReceiverAccountNumber = "123456790",
+                        Amount = amt
                     });
 
             return  GetResponse(resp);

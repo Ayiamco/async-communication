@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +10,7 @@ using System.Threading.Tasks;
 using WebHooks.SharedKernel.Base;
 using WebHooks.SharedKernel.Repositories;
 using WebHooks.SharedKernel.Repositories.Interfaces;
+using WebHooks.SharedKernel.Services;
 using static WebHooks.SharedKernel.Repositories.ClientRepo;
 
 namespace WebHooks.SharedKernel.Commands
@@ -50,7 +52,10 @@ namespace WebHooks.SharedKernel.Commands
                 try
                 {
                     await clientRepo.GetClient(request.ClientId);
+
                     //TODO: Push request to queue
+                    var producer = new TransferCashTopicProducer();
+                    await producer.PushTopic(JsonConvert.SerializeObject(request));
                     return new TfResponse
                     {
                         StatusCode = HttpStatusCode.Accepted,
