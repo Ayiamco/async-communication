@@ -2,7 +2,7 @@
 using WebHooks.SharedKernel.Repositories;
 using WebHooks.SharedKernel.Repositories.Interfaces;
 
-namespace Webhooks.Provider.Api.Infrastructure.Extensions
+namespace Webhooks.App.Api.Infrastructure.Extensions
 {
     public static class ServiceCollectionExt
     {

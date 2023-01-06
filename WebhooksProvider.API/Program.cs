@@ -1,5 +1,5 @@
 using MediatR;
-using Webhooks.Provider.Api.Infrastructure.Extensions;
+using Webhooks.App.Api.Infrastructure.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 var services = builder.Services;

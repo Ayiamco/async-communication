@@ -5,7 +5,7 @@ using System.Net;
 using WebHooks.SharedKernel.Base;
 using WebHooks.SharedKernel.Commands;
 
-namespace Webhooks.Provider.Api.Controllers
+namespace Webhooks.App.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
