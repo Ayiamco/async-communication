@@ -49,6 +49,13 @@ namespace Webhooks.App.Api.Controllers
             }
         }
 
-      
+        [HttpGet]
+        public async Task<IActionResult> TransferHook()
+        {
+            return Ok(new TransferHook
+            {
+                Status = "The status code for cash transfer request",
+            });
+        }
     }
 }
