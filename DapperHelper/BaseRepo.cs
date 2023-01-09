@@ -463,7 +463,7 @@
 
             private static string GetConnectionString(string? conn, DbLang sqlType)
             {
-                if (!string.IsNullOrEmpty(conn)) return conn;
+                if (!string.IsNullOrWhiteSpace(conn)) return conn;
 
 
                 //TODO: Finish map
