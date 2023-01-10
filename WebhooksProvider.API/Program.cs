@@ -6,7 +6,7 @@ var builder = WebApplication.CreateBuilder(args);
 var services = builder.Services;
 
 
-// Add services to the container.
+//Add services to the container.
 services.AddConnectionStrings((options) =>
 {
     options.SqlServerConnectionString = builder.Configuration["ConnectionStrings:SqlServerConnection"];
@@ -14,14 +14,10 @@ services.AddConnectionStrings((options) =>
 services.AddRepositories();
 services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 services.AddMediatR(AppDomain.CurrentDomain.GetAssemblies());
-
 services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 services.AddEndpointsApiExplorer();
-services.AddSwaggerGen((x) =>
-{
-    
-});
+services.AddSwaggerGen();
 
 var app = builder.Build();
 
