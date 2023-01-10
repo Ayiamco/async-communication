@@ -17,9 +17,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Components", "Components", 
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Services", "Services", "{7EAB6E41-D55C-4242-A54B-37A5D72BC67C}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Webhooks.Consumer.Api", "Webhooks.Consumer.Api\Webhooks.Consumer.Api.csproj", "{A065175C-F5D3-4234-A35A-516801DE78D6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Webhooks.Subscriber.Api", "Webhooks.Consumer.Api\Webhooks.Subscriber.Api.csproj", "{A065175C-F5D3-4234-A35A-516801DE78D6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebHooks.Provider.Worker", "WebHookPractice.Processor.Worker\WebHooks.Provider.Worker.csproj", "{CFDD67A8-115C-4AE7-A505-140395A13C62}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebHooks.Sender.Worker", "WebHookPractice.Processor.Worker\WebHooks.Sender.Worker.csproj", "{CFDD67A8-115C-4AE7-A505-140395A13C62}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

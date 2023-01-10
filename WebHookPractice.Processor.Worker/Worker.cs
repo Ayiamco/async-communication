@@ -1,6 +1,6 @@
 using WebHooks.SharedKernel.Services;
 
-namespace WebHookPractice.Provider.Worker
+namespace WebHookPractice.Sender.Worker
 {
     public class Worker : BackgroundService
     {

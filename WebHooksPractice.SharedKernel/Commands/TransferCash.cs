@@ -40,11 +40,13 @@ namespace WebHooks.SharedKernel.Commands
         {
             private readonly ILogger<Handler> logger;
             private readonly IClientRepo clientRepo;
+            private readonly ITransferCashTopicProducer producer;
 
-            public Handler(ILogger<Handler> logger, IClientRepo clientRepo )
+            public Handler(ILogger<Handler> logger, IClientRepo clientRepo , ITransferCashTopicProducer producer)
             {
                 this.logger = logger;
                 this.clientRepo = clientRepo;
+                this.producer = producer;
             }
 
             public async Task<TfResponse> Handle(TfCommand request, CancellationToken cancellationToken) 
@@ -52,9 +54,6 @@ namespace WebHooks.SharedKernel.Commands
                 try
                 {
                     await clientRepo.GetClient(request.ClientId);
-
-                    //TODO: Push request to queue
-                    var producer = new TransferCashTopicProducer();
                     await producer.PushTopic(JsonConvert.SerializeObject(request));
                     return new TfResponse
                     {

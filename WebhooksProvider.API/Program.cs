@@ -1,6 +1,7 @@
 using DapperHelper;
 using MediatR;
 using Webhooks.App.Api.Infrastructure.Extensions;
+using WebHooks.SharedKernel.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 var services = builder.Services;
@@ -11,6 +12,7 @@ services.AddConnectionStrings((options) =>
 {
     options.SqlServerConnectionString = builder.Configuration["ConnectionStrings:SqlServerConnection"];
 });
+services.AddSingleton<ITransferCashTopicProducer,TransferCashTopicProducer>();
 services.AddRepositories();
 services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 services.AddMediatR(AppDomain.CurrentDomain.GetAssemblies());

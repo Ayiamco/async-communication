@@ -6,7 +6,7 @@ using static WebHooks.SharedKernel.Base.AppConstants;
 
 namespace WebHooks.SharedKernel.Services
 {
-    public class TransferCashTopicConsumer
+    public class TransferCashTopicConsumer : ITransferCashTopicConsumer
     {
         private readonly ConsumerConfig consumerConfig;
         private readonly ILogger<TransferCashTopicConsumer> logger;
@@ -26,14 +26,14 @@ namespace WebHooks.SharedKernel.Services
         {
             using (var consumer = new ConsumerBuilder<Ignore, string>(consumerConfig).Build())
             {
-                consumer.Subscribe(new List<string> { KafkaTopics.CashTransfer});
+                consumer.Subscribe(new List<string> { KafkaTopics.CashTransfer });
 
                 while (!cancellationToken.IsCancellationRequested)
                 {
                     var consumeResult = consumer.Consume(cancellationToken);
                     logger.LogInformation($"result: {consumeResult?.Message.Value}");
                     // handle consumed message.
-                    
+
                 }
 
                 consumer.Close();
