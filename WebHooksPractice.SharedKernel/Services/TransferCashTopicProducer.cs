@@ -1,4 +1,5 @@
 ﻿using Confluent.Kafka;
+using WebHooks.SharedKernel.Services.Interfaces;
 using static WebHooks.SharedKernel.Base.AppConstants;
 
 namespace WebHooks.SharedKernel.Services

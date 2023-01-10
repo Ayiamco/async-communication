@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 using WebHooks.SharedKernel.Base;
 using WebHooks.SharedKernel.Repositories;
 using WebHooks.SharedKernel.Repositories.Interfaces;
-using WebHooks.SharedKernel.Services;
+using WebHooks.SharedKernel.Services.Interfaces;
 using static WebHooks.SharedKernel.Repositories.ClientRepo;
 
 namespace WebHooks.SharedKernel.Commands

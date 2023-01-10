@@ -2,6 +2,7 @@ using DapperHelper;
 using MediatR;
 using Webhooks.App.Api.Infrastructure.Extensions;
 using WebHooks.SharedKernel.Services;
+using WebHooks.SharedKernel.Services.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 var services = builder.Services;

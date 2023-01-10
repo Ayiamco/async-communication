@@ -2,6 +2,7 @@
 using System.Threading;
 using Confluent.Kafka;
 using Microsoft.Extensions.Logging;
+using WebHooks.SharedKernel.Services.Interfaces;
 using static WebHooks.SharedKernel.Base.AppConstants;
 
 namespace WebHooks.SharedKernel.Services

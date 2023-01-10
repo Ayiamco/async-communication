@@ -1,4 +1,4 @@
-﻿namespace WebHooks.SharedKernel.Services
+﻿namespace WebHooks.SharedKernel.Services.Interfaces
 {
     public interface ITransferCashTopicConsumer
     {

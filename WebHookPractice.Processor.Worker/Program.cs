@@ -1,5 +1,6 @@
 using WebHookPractice.Sender.Worker;
 using WebHooks.SharedKernel.Services;
+using WebHooks.SharedKernel.Services.Interfaces;
 
 IHost host = Host.CreateDefaultBuilder(args)
     .ConfigureServices(services =>
