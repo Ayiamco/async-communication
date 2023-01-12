@@ -16,7 +16,10 @@ namespace WebHooks.SharedKernel.Commands
             public string HandlerUrl { get; set; }
         }
 
-        public class Response : ApiResponse { }
+        public class Response : ApiResponse
+        {
+            public Guid ClientId { get; set; }
+        }
 
         public class Handler : IRequestHandler<Command, Response>
         {
@@ -33,11 +36,14 @@ namespace WebHooks.SharedKernel.Commands
                 while (!cancellationToken.IsCancellationRequested)
                 {
                     var parameters = mapper.Map<Client>(request);
+                    var clientId = Guid.NewGuid();
+                    parameters.Id = clientId;
                     var resp = await client.CreateClient(parameters);
 
                     if (resp == CommandResp.Success) return new Response()
                     {
-                        Message = "Client registration was successful"
+                        Message = "Client registration was successful",
+                        ClientId = clientId
                     };
 
                     return new Response

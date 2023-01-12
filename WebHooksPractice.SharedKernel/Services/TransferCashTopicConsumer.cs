@@ -1,6 +1,7 @@
 ﻿using Confluent.Kafka;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using System.Net;
 using WebHooks.SharedKernel.Base;
 using WebHooks.SharedKernel.Infrastructure;
 using WebHooks.SharedKernel.Repositories.Interfaces;
@@ -39,17 +40,35 @@ namespace WebHooks.SharedKernel.Services
 
                 while (!cancellationToken.IsCancellationRequested)
                 {
-                    var consumeResult = consumer.Consume(cancellationToken);
-                    var msg = consumeResult?.Message.Value;
-                    logger.LogInformation($"result: {msg}");
-                    var transferRequest = JsonConvert.DeserializeObject<TfCommand>(msg);
-                    var client = await clientRepo.GetClient(transferRequest.ClientId);
-                    var httpClient = httpClientFactory.CreateClient(client.HandlerUrl);
-                    Random random = new Random();
-                    var val = random.Next(0, 1);
+                    try
+                    {
+                        var consumeResult = consumer.Consume(cancellationToken);
+                        var msg = consumeResult?.Message.Value;
+                        logger.LogInformation($"Consumed Msg value: {msg}");
 
-                    var webHookPayload = val == 0 ? new ApiResponse { Message = "Transfer was not successful." } : new ApiResponse { Message = "Transfer was successful." };
-                    await httpClient.CallHandler(webHookPayload);
+                        var transferRequest = JsonConvert.DeserializeObject<TfCommand>(msg);
+                        var client = await clientRepo.GetClient(transferRequest.ClientId);
+                        var httpClient = httpClientFactory.CreateClient(client.HandlerUrl);
+
+                        //TODO: Implement actual transfer
+                        Random random = new Random();
+                        var val = random.Next(0, 1);
+
+                        var webHookPayload = val == 0 ? new ApiResponse { Message = "Transfer was not successful." } : new ApiResponse { Message = "Transfer was successful." };
+                        var resp = await httpClient.CallHandler(webHookPayload);
+
+                        if (resp == null || resp.StatusCode != HttpStatusCode.OK)
+                        {
+                            //Push Failure event back to queue
+                        }
+                    }
+                    catch (UriFormatException ex)
+                    {
+                        //send out a mail to the client to update their client handle url
+                        logger.LogError(ex, "Error occured while processing transfer.");
+                    }
+
+
 
                 }
 

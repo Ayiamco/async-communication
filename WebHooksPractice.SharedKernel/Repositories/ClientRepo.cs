@@ -14,7 +14,6 @@ namespace WebHooks.SharedKernel.Repositories
 
         public async Task<CommandResp> CreateClient(Client request)
         {
-            request.Id = Guid.NewGuid();
             var sql = $@"
 INSERT INTO clients  (ClientName, HandlerUrl,Id) 
 VALUES (@ClientName, @HandlerUrl, @Id)";
@@ -27,15 +26,15 @@ VALUES (@ClientName, @HandlerUrl, @Id)";
 SELECT HandlerUrl,Id FROM clients
 WHERE Id = @clientId
 ";
-            var resp= await RunQuery<Client>(sql, new { clientId });
+            var resp = await RunQuery<Client>(sql, new { clientId });
 
-            if (resp == null || !resp.Any()) 
+            if (resp == null || !resp.Any())
                 throw new ClientDoesNotExistException();
 
             return resp.First();
         }
 
 
-        public class ClientDoesNotExistException: Exception {}
+        public class ClientDoesNotExistException : Exception { }
     }
 }

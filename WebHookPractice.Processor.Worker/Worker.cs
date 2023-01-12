@@ -1,14 +1,17 @@
-using WebHooks.SharedKernel.Services;
+using WebHooks.SharedKernel.Services.Interfaces;
 
 namespace WebHookPractice.Sender.Worker
 {
     public class Worker : BackgroundService
     {
-        private readonly ILogger<TransferCashTopicConsumer> _logger;
+        private readonly ILogger<Worker> _logger;
+        private readonly ITransferCashTopicConsumer transferCashConsumer;
 
-        public Worker(ILogger<TransferCashTopicConsumer> logger)
+        public Worker(ILogger<Worker> logger,
+            ITransferCashTopicConsumer transferCashConsumer)
         {
             _logger = logger;
+            this.transferCashConsumer = transferCashConsumer;
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -16,9 +19,8 @@ namespace WebHookPractice.Sender.Worker
             while (!stoppingToken.IsCancellationRequested)
             {
                 _logger.LogInformation("Worker running at: {time}", DateTimeOffset.Now);
-                var consumer = new TransferCashTopicConsumer(_logger);
                 //await Task.Delay(new TimeSpan(0,2,0), stoppingToken);
-                await consumer.ConsumeMessage();
+                await transferCashConsumer.ConsumeMessage();
                 await Task.Delay(1000, stoppingToken);
             }
         }

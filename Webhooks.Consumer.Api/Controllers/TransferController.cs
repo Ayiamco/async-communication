@@ -27,7 +27,6 @@ namespace Webhooks.Subscriber.Api.Controllers
                 TransactionRef = "ghgvhj",
                 ReceiverBankCode = "678",
                 SenderAccountNumber = "1234567890",
-                SenderAccountNumber = "1234567890",
                 ReceiverAccountNumber = "123456790",
                 Amount = amt
             });
@@ -35,7 +34,7 @@ namespace Webhooks.Subscriber.Api.Controllers
             return GetResponse(resp);
         }
 
-        //[HttpPost]
+        //[HttpPost] j
         //public async Task<IActionResult> Handler(TransferHook transferHook)
         //{
         //    Console.WriteLine($"Handler by handler: {JsonConvert.SerializeObject(transferHook)}");
