@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using WebHooks.SharedKernel.Base;
 using WebHooks.SharedKernel.Commands;
 using WebHooks.SharedKernel.Infrastructure;
@@ -17,12 +18,12 @@ namespace Webhooks.Subscriber.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Index(decimal amt)
+        public async Task<IActionResult> Index(decimal amt, Guid clientId)
         {
             var apiClient = httpClientFactory.CreateClient("https://localhost:7224/");
             var resp = await apiClient.TransferCash(new TransferCash.TfCommand
             {
-                ClientId = new Guid("1C37FC08-96F9-4F82-B041-E50961E45AA5"),
+                ClientId = clientId,
                 SenderBankCode = "06",
                 TransactionRef = "ghgvhj",
                 ReceiverBankCode = "678",
@@ -34,11 +35,11 @@ namespace Webhooks.Subscriber.Api.Controllers
             return GetResponse(resp);
         }
 
-        //[HttpPost] j
-        //public async Task<IActionResult> Handler(TransferHook transferHook)
-        //{
-        //    Console.WriteLine($"Handler by handler: {JsonConvert.SerializeObject(transferHook)}");
-        //    return Ok();
-        //}
+        [HttpPost("/handler")]
+        public async Task<IActionResult> Handler(HandlerUrlPayload transferHook)
+        {
+            Console.WriteLine($"Handler recieved webhook: {JsonConvert.SerializeObject(transferHook)}");
+            return Ok(new ApiResponse());
+        }
     }
 }

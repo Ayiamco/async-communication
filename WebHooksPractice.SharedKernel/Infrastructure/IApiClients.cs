@@ -10,6 +10,6 @@ namespace WebHooks.SharedKernel.Infrastructure
         Task<TransferCash.TfResponse> TransferCash(TransferCash.TfCommand command);
 
         [Post("/handler")]
-        Task<ApiResponse> CallHandler(ApiResponse handlerRequest);
+        Task<ApiResponse> CallHandler(HandlerUrlPayload handlerRequest);
     }
 }

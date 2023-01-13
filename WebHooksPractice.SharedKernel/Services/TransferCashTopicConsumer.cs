@@ -1,6 +1,7 @@
 ﻿using Confluent.Kafka;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using Refit;
 using System.Net;
 using WebHooks.SharedKernel.Base;
 using WebHooks.SharedKernel.Infrastructure;
@@ -52,26 +53,36 @@ namespace WebHooks.SharedKernel.Services
 
                         //TODO: Implement actual transfer
                         Random random = new Random();
-                        var val = random.Next(0, 1);
+                        var isSuccesful = random.Next(0, 1);
 
-                        var webHookPayload = val == 0 ? new ApiResponse { Message = "Transfer was not successful." } : new ApiResponse { Message = "Transfer was successful." };
-                        var resp = await httpClient.CallHandler(webHookPayload);
+                        var reqPayload = new HandlerUrlPayload { TransferReference = transferRequest.TransactionRef };
+                        reqPayload.Message = isSuccesful == 0 ? "Transfer was not successful." : "Transfer was successful.";
+                        var resp = await httpClient.CallHandler(reqPayload);
 
                         if (resp == null || resp.StatusCode != HttpStatusCode.OK)
                         {
                             //Push Failure event back to queue
                         }
+
+                        logger.LogInformation("Successfully transfered cash.");
+                        //TODO: log event to db
                     }
                     catch (UriFormatException ex)
                     {
                         //send out a mail to the client to update their client handle url
-                        logger.LogError(ex, "Error occured while processing transfer.");
+                        logger.LogError(ex, "Client handler Url is invalid.");
                     }
+                    catch (ApiException ex)
+                    {
+                        //Queue unSuccessful handler call for retrial
+                        logger.LogError(ex, $"Encountered some error while calling client handleUrl. {ex}");
 
-
-
+                    }
+                    catch (Exception ex)
+                    {
+                        logger.LogError(ex, "Some error occured");
+                    }
                 }
-
                 consumer.Close();
             }
         }

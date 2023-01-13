@@ -11,4 +11,8 @@ namespace WebHooks.SharedKernel.Base
         public string? ErrorMessage { get; set; }
     }
 
+    public class HandlerUrlPayload : ApiResponse
+    {
+        public string? TransferReference { get; set; }
+    }
 }
