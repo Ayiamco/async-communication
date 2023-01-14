@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <PackageId>ayiamco-$(AssemblyName)</PackageId>
+    <Title>DapperHelper</Title>
+    <Authors>Joseph Achonu</Authors>
+    <Description>A package containing wrapper classes for dapper with SqlServer, Oracle and Sybase support.</Description>
+    <PackageProjectUrl>https://github.com/Ayiamco/DapperHelper</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/Ayiamco/DapperHelper</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageTags>dapper,oracle,sybase,sqlserver</PackageTags>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AdoNetCore.AseClient" Version="0.19.2" />
+    <PackageReference Include="Dapper" Version="2.0.123" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="6.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="7.0.0" />
+    <PackageReference Include="Oracle.ManagedDataAccess.Core" Version="3.21.80" />
+    <PackageReference Include="System.Data.SqlClient" Version="4.8.5" />
+  </ItemGroup>
+
+</Project>
