@@ -55,7 +55,7 @@ namespace WebHooks.SharedKernel.Services
                         Random random = new Random();
                         var isSuccesful = random.Next(0, 1);
 
-                        var reqPayload = new HandlerUrlPayload { TransferReference = transferRequest.TransactionRef };
+                        var reqPayload = new TransferWebHookCallBackPayload { TransferReference = transferRequest.TransactionRef };
                         reqPayload.Message = isSuccesful == 0 ? "Transfer was not successful." : "Transfer was successful.";
                         var resp = await httpClient.CallHandler(reqPayload);
 

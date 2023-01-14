@@ -36,7 +36,7 @@ namespace Webhooks.Subscriber.Api.Controllers
         }
 
         [HttpPost("/handler")]
-        public async Task<IActionResult> Handler(HandlerUrlPayload transferHook)
+        public async Task<IActionResult> Handler(TransferWebHookCallBackPayload transferHook)
         {
             Console.WriteLine($"Handler recieved webhook: {JsonConvert.SerializeObject(transferHook)}");
             return Ok(new ApiResponse());
