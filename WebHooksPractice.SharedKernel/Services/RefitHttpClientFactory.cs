@@ -1,9 +1,4 @@
 ﻿using Refit;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using WebHooks.SharedKernel.Services.Interfaces;
 
 namespace WebHooks.SharedKernel.Services
@@ -16,6 +11,14 @@ namespace WebHooks.SharedKernel.Services
                 throw new ArgumentNullException($"Argument {nameof(baseAddressKey)} cannot be null or empty");
 
             return RestService.For<T>(baseAddressKey);
+        }
+
+        public T CreateClient(HttpClient httpClient)
+        {
+            if (httpClient == default)
+                throw new ArgumentNullException($"Argument {nameof(httpClient)} cannot be null.");
+
+            return RestService.For<T>(httpClient);
         }
     }
 }

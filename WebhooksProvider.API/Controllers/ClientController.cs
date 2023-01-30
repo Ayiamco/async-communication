@@ -1,7 +1,5 @@
 ﻿using MediatR;
-using Microsoft.AspNetCore.Authentication.OAuth;
 using Microsoft.AspNetCore.Mvc;
-using System.Net;
 using WebHooks.SharedKernel.Base;
 using WebHooks.SharedKernel.Commands;
 
@@ -36,11 +34,11 @@ namespace Webhooks.App.Api.Controllers
         }
 
         [HttpPost("transfer")]
-        public async Task<IActionResult> Transfer(TransferCash.TfCommand command, CancellationToken cancellationToken)
+        public async Task<IActionResult> Transfer(TransferCash.Command command, CancellationToken cancellationToken)
         {
             try
             {
-                return GetResponse(await mediator.Send(command, cancellationToken));    
+                return GetResponse(await mediator.Send(command, cancellationToken));
             }
             catch (Exception ex)
             {

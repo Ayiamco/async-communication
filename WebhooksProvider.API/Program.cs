@@ -1,4 +1,4 @@
-using DapperHelper;
+using Dapper.BaseRepository.Config;
 using MediatR;
 using Webhooks.App.Api.Infrastructure.Extensions;
 using WebHooks.SharedKernel.Services;
@@ -13,14 +13,17 @@ services.AddConnectionStrings((options) =>
 {
     options.SqlServerConnectionString = builder.Configuration["ConnectionStrings:SqlServerConnection"];
 });
-services.AddSingleton<ITransferCashTopicProducer,TransferCashTopicProducer>();
+services.AddSingleton<ITransferCashTopicProducer, TransferCashTopicProducer>();
 services.AddRepositories();
 services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 services.AddMediatR(AppDomain.CurrentDomain.GetAssemblies());
 services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 services.AddEndpointsApiExplorer();
-services.AddSwaggerGen();
+services.AddSwaggerGen(options =>
+{
+    options.CustomSchemaIds(type => type.ToString());
+});
 
 var app = builder.Build();
 

@@ -1,14 +1,14 @@
-﻿using DapperHelper;
-using DapperHelper.WorkflowCore.Library.Repositories;
-using Microsoft.Extensions.Logging;
+﻿using Dapper.BaseRepository.Components;
+using Dapper.BaseRepository.Config;
 using WebHooks.SharedKernel.Entities;
+using WebHooks.SharedKernel.Infrastructure;
 using WebHooks.SharedKernel.Repositories.Interfaces;
 
 namespace WebHooks.SharedKernel.Repositories
 {
-    public class ClientRepo : BaseRepo<ClientRepo>, IClientRepo
+    public class ClientRepo : BaseRepository<ClientRepo, AppLogger<ClientRepo>>, IClientRepo
     {
-        public ClientRepo(ILogger<ClientRepo> logger) : base(logger)
+        public ClientRepo(IAppLogger<ClientRepo> logger) : base(logger)
         {
         }
 

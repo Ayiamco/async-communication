@@ -20,8 +20,8 @@ namespace Webhooks.Subscriber.Api.Controllers
         [HttpPost]
         public async Task<IActionResult> Index(decimal amt, Guid clientId)
         {
-            var apiClient = httpClientFactory.CreateClient("https://localhost:7224/");
-            var resp = await apiClient.TransferCash(new TransferCash.TfCommand
+            var apiClient = httpClientFactory.CreateClient("https://localhost:7224");
+            var resp = await apiClient.TransferCash(new TransferCash.Command
             {
                 ClientId = clientId,
                 SenderBankCode = "06",
@@ -36,9 +36,9 @@ namespace Webhooks.Subscriber.Api.Controllers
         }
 
         [HttpPost("/handler")]
-        public async Task<IActionResult> Handler(TransferWebHookCallBackPayload transferHook)
+        public async Task<IActionResult> Handler(TransferWebHookCallBackPayload handlerRequest)
         {
-            Console.WriteLine($"Handler recieved webhook: {JsonConvert.SerializeObject(transferHook)}");
+            Console.WriteLine($"Handler recieved webhook: {JsonConvert.SerializeObject(handlerRequest)}");
             return Ok(new ApiResponse());
         }
     }

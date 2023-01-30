@@ -7,7 +7,7 @@ namespace WebHooks.SharedKernel.Infrastructure
     public interface IApiClients
     {
         [Post("/api/client/transfer")]
-        Task<TransferCash.TfResponse> TransferCash(TransferCash.TfCommand command);
+        Task<TransferCash.TfResponse> TransferCash(TransferCash.Command command);
 
         [Post("/handler")]
         Task<ApiResponse> CallHandler(TransferWebHookCallBackPayload handlerRequest);

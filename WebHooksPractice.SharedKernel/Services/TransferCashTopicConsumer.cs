@@ -47,8 +47,12 @@ namespace WebHooks.SharedKernel.Services
                         var msg = consumeResult?.Message.Value;
                         logger.LogInformation($"Consumed Msg value: {msg}");
 
-                        var transferRequest = JsonConvert.DeserializeObject<TfCommand>(msg);
+                        var transferRequest = JsonConvert.DeserializeObject<Command>(msg);
                         var client = await clientRepo.GetClient(transferRequest.ClientId);
+                        //var httpClient_ = new HttpClient(new HttpLoggingHandler()) { BaseAddress = new Uri(client.HandlerUrl) };
+
+                        //var httpClient = httpClientFactory.CreateClient(httpClient_);
+                        //var resp__ = await httpClient_.PostAsync("/handler", new StringContent("") { });
                         var httpClient = httpClientFactory.CreateClient(client.HandlerUrl);
 
                         //TODO: Implement actual transfer

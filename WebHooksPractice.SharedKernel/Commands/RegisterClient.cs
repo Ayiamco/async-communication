@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using DapperHelper;
+using Dapper.BaseRepository.Config;
 using MediatR;
 using WebHooks.SharedKernel.Base;
 using WebHooks.SharedKernel.Entities;

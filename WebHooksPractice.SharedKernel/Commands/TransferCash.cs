@@ -17,7 +17,7 @@ namespace WebHooks.SharedKernel.Commands
 {
     public static class TransferCash
     {
-        public class TfCommand :IRequest<TfResponse>
+        public class Command :IRequest<TfResponse>
         {
             public decimal Amount { get; set; }
 
@@ -36,7 +36,7 @@ namespace WebHooks.SharedKernel.Commands
 
         public class TfResponse : ApiResponse { }
 
-        public class Handler : IRequestHandler<TfCommand, TfResponse>
+        public class Handler : IRequestHandler<Command, TfResponse>
         {
             private readonly ILogger<Handler> logger;
             private readonly IClientRepo clientRepo;
@@ -49,7 +49,7 @@ namespace WebHooks.SharedKernel.Commands
                 this.producer = producer;
             }
 
-            public async Task<TfResponse> Handle(TfCommand request, CancellationToken cancellationToken) 
+            public async Task<TfResponse> Handle(Command request, CancellationToken cancellationToken) 
             {
                 try
                 {

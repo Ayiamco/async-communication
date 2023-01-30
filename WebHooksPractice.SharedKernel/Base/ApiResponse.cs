@@ -11,8 +11,13 @@ namespace WebHooks.SharedKernel.Base
         public string? ErrorMessage { get; set; }
     }
 
-    public class TransferWebHookCallBackPayload : ApiResponse
+    public class TransferWebHookCallBackPayload
     {
+        public int StatusCode { get; set; }
+
+        public string? Message { get; set; }
+
+        public string? ErrorMessage { get; set; }
         public string? TransferReference { get; set; }
     }
 }

@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Webhooks.App.Api", "Webhook
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebHooks.SharedKernel", "WebHooksPractice.SharedKernel\WebHooks.SharedKernel.csproj", "{7E9F3B7A-C4D9-4228-8AF8-217BB0023F2B}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DapperHelper", "DapperHelper\DapperHelper.csproj", "{DCD9E289-7A35-4195-BBAC-CB49B5DB9833}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dapper.BaseRepository", "DapperHelper\Dapper.BaseRepository.csproj", "{DCD9E289-7A35-4195-BBAC-CB49B5DB9833}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{9AAF1F3B-6AA7-440F-ADC9-D841F8E58104}"
 EndProject

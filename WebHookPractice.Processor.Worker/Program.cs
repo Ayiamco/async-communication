@@ -1,4 +1,4 @@
-using DapperHelper;
+using Dapper.BaseRepository.Config;
 using Refit;
 using WebHookPractice.Sender.Worker;
 using WebHooks.SharedKernel.Infrastructure;
@@ -17,6 +17,7 @@ IHost host = Host.CreateDefaultBuilder(args)
         services.AddSingleton(typeof(IRefitHttpClientFactory<>), typeof(RefitHttpClientFactory<>));
         services.AddRefitClient<IApiClients>();
 
+        services.AddSingleton(typeof(IAppLogger<>), typeof(AppLogger<>));
         services.AddSingleton<IClientRepo, ClientRepo>();
         services.AddSingleton<ITransferCashTopicConsumer, TransferCashTopicConsumer>();
         services.AddHostedService<Worker>();

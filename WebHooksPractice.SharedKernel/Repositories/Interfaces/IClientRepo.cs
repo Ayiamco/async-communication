@@ -1,4 +1,4 @@
-﻿using DapperHelper;
+﻿using Dapper.BaseRepository.Config;
 using WebHooks.SharedKernel.Entities;
 
 namespace WebHooks.SharedKernel.Repositories.Interfaces
