@@ -7,57 +7,30 @@
     using System.Data;
     using System.Runtime.CompilerServices;
 
-
+    /// <summary>
+    /// Base repository supported db types.
+    /// </summary>
     public enum DbType
     {
-        OracleServer,
+        Oracle,
         SqlServer,
-        SybaseServer
-    }
-
-    /// <summary>
-    /// Supported db types for Sql text that manipulates data (DML).
-    /// </summary>
-    public enum CommandDbTypes
-    {
-        SqlServer, Oracle, Sybase
-    }
-
-    /// <summary>
-    /// Supported db types for Sql stored procedure that manipulates data (DML).
-    /// </summary>
-    public enum StoredProcDbTypes
-    {
-        SqlServer, Oracle, Sybase
-    }
-
-    /// <summary>
-    /// Supported db types for Sql Text that queries data (DQL) and returns non scalar objects.
-    /// </summary>
-    public enum QueryDbTypes
-    {
-        SqlServer, Oracle, Sybase
-    }
-
-    public enum ScalarQueryDbTypes
-    {
-        SqlServer, Oracle, Sybase
+        Sybase
     }
 
     public abstract class BaseRepository<TRepo>
     {
 
         //TODO: Figure out how libraries log
-        protected readonly Dictionary<CommandDbTypes, Func<string, string, object?, int>> CommandsMap;
+        protected readonly Dictionary<DbType, Func<string, string, object?, int>> CommandsMap;
 
         protected BaseRepository()
         {
             CommandsMap = new()
-                {
-                    {CommandDbTypes.Sybase, DapperOrmExecutor.ExecuteSybaseCommand },
-                    {CommandDbTypes.Oracle, DapperOrmExecutor.ExecuteOracleCommand },
-                    {CommandDbTypes.SqlServer, DapperOrmExecutor.ExecuteCommand},
-                };
+            {
+                {DbType.Sybase, DapperOrmExecutor.ExecuteSybaseCommand },
+                {DbType.Oracle, DapperOrmExecutor.ExecuteOracleCommand },
+                {DbType.SqlServer, DapperOrmExecutor.ExecuteCommand},
+            };
         }
 
         /// <summary>
@@ -109,13 +82,13 @@
         /// <param name="queryParam">queryParam parameters for the sql command.</param>
         /// <returns></returns>
         protected Task<CommandResp> RunCommand(string sqlCommand, object queryParam,
-            CommandDbTypes commandType, [CallerMemberName] string callerMemberName = "")
+            DbType commandType, [CallerMemberName] string callerMemberName = "")
         {
-            var map = new Dictionary<CommandDbTypes, DbType>
+            var map = new Dictionary<DbType, DbType>
                 {
-                    { CommandDbTypes.SqlServer, DbType.SqlServer },
-                    { CommandDbTypes.Oracle, DbType.OracleServer },
-                    { CommandDbTypes.Sybase, DbType.SybaseServer },
+                    { DbType.SqlServer, DbType.SqlServer },
+                    { DbType.Oracle, DbType.Oracle },
+                    { DbType.Sybase, DbType.Sybase },
                 };
 
             if (queryParam.GetType() == typeof(string))
@@ -135,15 +108,15 @@
         /// <param name="queryParam">queryParam parameters for the sql command.</param>
         /// <returns></returns>
         protected Task<CommandResp> RunCommand(string sqlCommand, object queryParam,
-            CommandDbTypes commandType, string connectionString, [CallerMemberName] string callerMemberName = "")
+            DbType commandType, string connectionString, [CallerMemberName] string callerMemberName = "")
         {
             if (queryParam.GetType() == typeof(string))
                 throw new ArgumentException("queryParam must be an object containing the sqlCommand queryParam parameters");
 
-            var map = new Dictionary<CommandDbTypes, DbType> {
-                { CommandDbTypes.SqlServer, DbType.SqlServer },
-                { CommandDbTypes.Oracle, DbType.OracleServer },
-                { CommandDbTypes.Sybase, DbType.SybaseServer },
+            var map = new Dictionary<DbType, DbType> {
+                { DbType.SqlServer, DbType.SqlServer },
+                { DbType.Oracle, DbType.Oracle },
+                { DbType.Sybase, DbType.Sybase },
             };
 
             connectionString = string.IsNullOrWhiteSpace(connectionString) ?
@@ -201,7 +174,7 @@
         }
 
         protected Task<IEnumerable<TResult>> RunQuery<TResult>(string sqlQuery,
-           QueryDbTypes queryDbType, [CallerMemberName] string callerMemberName = "") where TResult : class
+           DbType queryDbType, [CallerMemberName] string callerMemberName = "") where TResult : class
         {
             if (string.IsNullOrWhiteSpace(sqlQuery))
                 throw new ArgumentException("sqlQuery cannot be empty and queryParam must be sqlQuery parameter object");
@@ -209,13 +182,13 @@
             IEnumerable<TResult> resp = null;
             switch (queryDbType)
             {
-                case QueryDbTypes.SqlServer:
+                case DbType.SqlServer:
                     resp = DapperOrmExecutor.Query<TResult>(sqlQuery, ConnectionStrings.SqlServerConnection, new { });
                     break;
-                case QueryDbTypes.Sybase:
+                case DbType.Sybase:
                     resp = DapperOrmExecutor.Query<TResult>(sqlQuery, ConnectionStrings.SqlServerConnection, new { });
                     break;
-                case QueryDbTypes.Oracle:
+                case DbType.Oracle:
                     resp = DapperOrmExecutor.Query<TResult>(sqlQuery, ConnectionStrings.SqlServerConnection, new { });
                     break;
             }
@@ -224,7 +197,7 @@
         }
 
         protected Task<IEnumerable<TResult>> RunQuery<TResult>(string sqlQuery, object queryParam,
-           QueryDbTypes queryDbType, [CallerMemberName] string callerMemberName = "") where TResult : class
+           DbType queryDbType, [CallerMemberName] string callerMemberName = "") where TResult : class
         {
             if (string.IsNullOrWhiteSpace(sqlQuery) || queryParam.GetType() == typeof(string))
                 throw new ArgumentException("sqlQuery cannot be empty and queryParam must be sqlQuery parameter object");
@@ -232,13 +205,13 @@
             IEnumerable<TResult> resp = null;
             switch (queryDbType)
             {
-                case QueryDbTypes.SqlServer:
+                case DbType.SqlServer:
                     resp = DapperOrmExecutor.Query<TResult>(sqlQuery, ConnectionStrings.SqlServerConnection, queryParam);
                     break;
-                case QueryDbTypes.Sybase:
+                case DbType.Sybase:
                     resp = DapperOrmExecutor.Query<TResult>(sqlQuery, ConnectionStrings.SqlServerConnection, queryParam);
                     break;
-                case QueryDbTypes.Oracle:
+                case DbType.Oracle:
                     resp = DapperOrmExecutor.Query<TResult>(sqlQuery, ConnectionStrings.SqlServerConnection, queryParam);
                     break;
             }
@@ -247,7 +220,7 @@
         }
 
         protected Task<IEnumerable<TResult>> RunQuery<TResult>(string sqlQuery, string connectionString,
-           QueryDbTypes queryDbType, [CallerMemberName] string callerMemberName = "") where TResult : class
+           DbType queryDbType, [CallerMemberName] string callerMemberName = "") where TResult : class
         {
             if (string.IsNullOrWhiteSpace(sqlQuery))
                 throw new ArgumentException("sqlQuery cannot be empty.");
@@ -255,13 +228,13 @@
             IEnumerable<TResult> resp = null;
             switch (queryDbType)
             {
-                case QueryDbTypes.SqlServer:
+                case DbType.SqlServer:
                     resp = DapperOrmExecutor.Query<TResult>(sqlQuery, connectionString, new { });
                     break;
-                case QueryDbTypes.Sybase:
+                case DbType.Sybase:
                     resp = DapperOrmExecutor.Query<TResult>(sqlQuery, connectionString, new { });
                     break;
-                case QueryDbTypes.Oracle:
+                case DbType.Oracle:
                     resp = DapperOrmExecutor.Query<TResult>(sqlQuery, connectionString, new { });
                     break;
             }
@@ -270,7 +243,7 @@
         }
 
         protected Task<IEnumerable<TResult>> RunQuery<TResult>(string sqlQuery, object queryParam, string connectionString,
-           QueryDbTypes queryDbType, [CallerMemberName] string callerMemberName = "") where TResult : class
+           DbType queryDbType, [CallerMemberName] string callerMemberName = "") where TResult : class
         {
             if (string.IsNullOrWhiteSpace(sqlQuery) || queryParam.GetType() == typeof(string))
                 throw new ArgumentException("sqlQuery cannot be empty and queryParam must be sqlQuery parameter object");
@@ -278,13 +251,13 @@
             IEnumerable<TResult> resp = null;
             switch (queryDbType)
             {
-                case QueryDbTypes.SqlServer:
+                case DbType.SqlServer:
                     resp = DapperOrmExecutor.Query<TResult>(sqlQuery, connectionString, queryParam);
                     break;
-                case QueryDbTypes.Sybase:
+                case DbType.Sybase:
                     resp = DapperOrmExecutor.Query<TResult>(sqlQuery, connectionString, queryParam);
                     break;
-                case QueryDbTypes.Oracle:
+                case DbType.Oracle:
                     resp = DapperOrmExecutor.Query<TResult>(sqlQuery, connectionString, queryParam);
                     break;
             }
@@ -352,15 +325,15 @@
             var connectionStringMap = new Dictionary<DbType, string>()
             {
                 {DbType.SqlServer,ConnectionStrings.SqlServerConnection },
-                {DbType.SybaseServer,ConnectionStrings.SybaseConnection },
-                {DbType.OracleServer,ConnectionStrings.OracleConnection },
+                {DbType.Sybase,ConnectionStrings.SybaseConnection },
+                {DbType.Oracle,ConnectionStrings.OracleConnection },
             };
 
             var dbTypeNameMap = new Dictionary<DbType, string>()
             {
                 {DbType.SqlServer,"SqlServer database" },
-                {DbType.SybaseServer,"Sybase database" },
-                {DbType.OracleServer,"Oracle database" },
+                {DbType.Sybase,"Sybase database" },
+                {DbType.Oracle,"Oracle database" },
             };
             var connectionString = connectionStringMap[sqlType];
             if (string.IsNullOrEmpty(connectionString))
@@ -394,16 +367,16 @@
     public abstract class BaseRepository<TRepo, TLogger> where TLogger : IBaseRepositoryLogger<TRepo> where TRepo : class
     {
         protected readonly IBaseRepositoryLogger<TRepo> logger;
-        protected readonly Dictionary<CommandDbTypes, Func<string, string, object?, int>> CommandsMap;
+        protected readonly Dictionary<DbType, Func<string, string, object?, int>> CommandsMap;
 
         protected BaseRepository(IBaseRepositoryLogger<TRepo> logger)
         {
             this.logger = logger;
             CommandsMap = new()
             {
-                {CommandDbTypes.Sybase, DapperOrmExecutor.ExecuteSybaseCommand },
-                {CommandDbTypes.Oracle, DapperOrmExecutor.ExecuteOracleCommand },
-                {CommandDbTypes.SqlServer, DapperOrmExecutor.ExecuteCommand},
+                {DbType.Sybase, DapperOrmExecutor.ExecuteSybaseCommand },
+                {DbType.Oracle, DapperOrmExecutor.ExecuteOracleCommand },
+                {DbType.SqlServer, DapperOrmExecutor.ExecuteCommand},
             };
         }
 
@@ -478,15 +451,15 @@
         /// <param name="queryParam">queryParam parameters for the sql command.</param>
         /// <returns></returns>
         protected Task<CommandResp> RunCommand(string sqlCommand, object queryParam,
-            CommandDbTypes commandType, [CallerMemberName] string callerMemberName = "")
+            DbType commandType, [CallerMemberName] string callerMemberName = "")
         {
             try
             {
-                var map = new Dictionary<CommandDbTypes, DbType>
+                var map = new Dictionary<DbType, DbType>
                 {
-                    { CommandDbTypes.SqlServer, DbType.SqlServer },
-                    { CommandDbTypes.Oracle, DbType.OracleServer },
-                    { CommandDbTypes.Sybase, DbType.SybaseServer },
+                    { DbType.SqlServer, DbType.SqlServer },
+                    { DbType.Oracle, DbType.Oracle },
+                    { DbType.Sybase, DbType.Sybase },
                 };
 
                 if (queryParam.GetType() == typeof(string))
@@ -515,18 +488,18 @@
         /// <param name="queryParam">queryParam parameters for the sql command.</param>
         /// <returns></returns>
         protected Task<CommandResp> RunCommand(string sqlCommand, object queryParam,
-            CommandDbTypes commandType, string connectionString, [CallerMemberName] string callerMemberName = "")
+            DbType commandType, string connectionString, [CallerMemberName] string callerMemberName = "")
         {
             try
             {
                 if (queryParam.GetType() == typeof(string))
                     throw new ArgumentException("queryParam must be an object containing the sqlCommand queryParam parameters");
 
-                var map = new Dictionary<CommandDbTypes, DbType>
+                var map = new Dictionary<DbType, DbType>
                 {
-                    { CommandDbTypes.SqlServer, DbType.SqlServer },
-                    { CommandDbTypes.Oracle, DbType.OracleServer },
-                    { CommandDbTypes.Sybase, DbType.SybaseServer },
+                    { DbType.SqlServer, DbType.SqlServer },
+                    { DbType.Oracle, DbType.Oracle },
+                    { DbType.Sybase, DbType.Sybase },
                 };
 
                 connectionString = string.IsNullOrWhiteSpace(connectionString) ?
@@ -615,7 +588,7 @@
         }
 
         protected Task<IEnumerable<TResult>> RunQuery<TResult>(string sqlQuery,
-           QueryDbTypes queryDbType, [CallerMemberName] string callerMemberName = "") where TResult : class
+           DbType queryDbType, [CallerMemberName] string callerMemberName = "") where TResult : class
         {
             try
             {
@@ -625,13 +598,13 @@
                 IEnumerable<TResult> resp = null;
                 switch (queryDbType)
                 {
-                    case QueryDbTypes.SqlServer:
+                    case DbType.SqlServer:
                         resp = DapperOrmExecutor.Query<TResult>(sqlQuery, ConnectionStrings.SqlServerConnection, new { });
                         break;
-                    case QueryDbTypes.Sybase:
+                    case DbType.Sybase:
                         resp = DapperOrmExecutor.Query<TResult>(sqlQuery, ConnectionStrings.SqlServerConnection, new { });
                         break;
-                    case QueryDbTypes.Oracle:
+                    case DbType.Oracle:
                         resp = DapperOrmExecutor.Query<TResult>(sqlQuery, ConnectionStrings.SqlServerConnection, new { });
                         break;
                 }
@@ -646,7 +619,7 @@
         }
 
         protected Task<IEnumerable<TResult>> RunQuery<TResult>(string sqlQuery, object queryParam,
-           QueryDbTypes queryDbType, [CallerMemberName] string callerMemberName = "") where TResult : class
+           DbType queryDbType, [CallerMemberName] string callerMemberName = "") where TResult : class
         {
             try
             {
@@ -656,13 +629,13 @@
                 IEnumerable<TResult> resp = null;
                 switch (queryDbType)
                 {
-                    case QueryDbTypes.SqlServer:
+                    case DbType.SqlServer:
                         resp = DapperOrmExecutor.Query<TResult>(sqlQuery, ConnectionStrings.SqlServerConnection, queryParam);
                         break;
-                    case QueryDbTypes.Sybase:
+                    case DbType.Sybase:
                         resp = DapperOrmExecutor.Query<TResult>(sqlQuery, ConnectionStrings.SqlServerConnection, queryParam);
                         break;
-                    case QueryDbTypes.Oracle:
+                    case DbType.Oracle:
                         resp = DapperOrmExecutor.Query<TResult>(sqlQuery, ConnectionStrings.SqlServerConnection, queryParam);
                         break;
                 }
@@ -677,7 +650,7 @@
         }
 
         protected Task<IEnumerable<TResult>> RunQuery<TResult>(string sqlQuery, string connectionString,
-           QueryDbTypes queryDbType, [CallerMemberName] string callerMemberName = "") where TResult : class
+           DbType queryDbType, [CallerMemberName] string callerMemberName = "") where TResult : class
         {
             try
             {
@@ -687,13 +660,13 @@
                 IEnumerable<TResult> resp = null;
                 switch (queryDbType)
                 {
-                    case QueryDbTypes.SqlServer:
+                    case DbType.SqlServer:
                         resp = DapperOrmExecutor.Query<TResult>(sqlQuery, connectionString, new { });
                         break;
-                    case QueryDbTypes.Sybase:
+                    case DbType.Sybase:
                         resp = DapperOrmExecutor.Query<TResult>(sqlQuery, connectionString, new { });
                         break;
-                    case QueryDbTypes.Oracle:
+                    case DbType.Oracle:
                         resp = DapperOrmExecutor.Query<TResult>(sqlQuery, connectionString, new { });
                         break;
                 }
@@ -708,7 +681,7 @@
         }
 
         protected Task<IEnumerable<TResult>> RunQuery<TResult>(string sqlQuery, object queryParam, string connectionString,
-           QueryDbTypes queryDbType, [CallerMemberName] string callerMemberName = "") where TResult : class
+           DbType queryDbType, [CallerMemberName] string callerMemberName = "") where TResult : class
         {
             try
             {
@@ -718,13 +691,13 @@
                 IEnumerable<TResult> resp = null;
                 switch (queryDbType)
                 {
-                    case QueryDbTypes.SqlServer:
+                    case DbType.SqlServer:
                         resp = DapperOrmExecutor.Query<TResult>(sqlQuery, connectionString, queryParam);
                         break;
-                    case QueryDbTypes.Sybase:
+                    case DbType.Sybase:
                         resp = DapperOrmExecutor.Query<TResult>(sqlQuery, connectionString, queryParam);
                         break;
-                    case QueryDbTypes.Oracle:
+                    case DbType.Oracle:
                         resp = DapperOrmExecutor.Query<TResult>(sqlQuery, connectionString, queryParam);
                         break;
                 }
@@ -738,18 +711,66 @@
             }
         }
 
-        protected Task<DynamicParameters> RunCommandProc<TInputParam>(string storedProcedure, TInputParam paramObject,
+        /// <summary>
+        /// Runs a stored procedure on a sql server database.
+        /// </summary>
+        /// <typeparam name="TInputParam"></typeparam>
+        /// <param name="storedProcedureName">The name of the stored procedure</param>
+        /// <param name="paramObject">An object containing input , output and return parameters of the stored procedure.</param>
+        /// <param name="callerMemberName">The name of the calling function. (used for logging)</param>
+        /// <returns></returns>
+        protected Task<DynamicParameters> RunStoredProcedure<TInputParam>(string storedProcedureName, TInputParam paramObject,
              [CallerMemberName] string callerMemberName = "")
         {
             try
             {
-                var dynamicParameters = CreateDynamicParameter(paramObject);
-                DapperOrmExecutor.ExecuteCommandProc(storedProcedure, ConnectionStrings.SqlServerConnection, dynamicParameters);
+                var dynamicParameters = new DynamicParameters();
+
+                if (paramObject != null)
+                    dynamicParameters = CreateDynamicParameter(paramObject);
+
+                if (string.IsNullOrWhiteSpace(ConnectionStrings.SqlServerConnection))
+                    throw new NullReferenceException("ConnectionStrings.SqlServerConnection is null, please set a default value for sqlserver connection.");
+
+                DapperOrmExecutor.ExecuteCommandProc(storedProcedureName, ConnectionStrings.SqlServerConnection, dynamicParameters);
                 return Task.FromResult(dynamicParameters);
             }
             catch (Exception ex)
             {
-                logger.LogError(GetLogMessage($"{callerMemberName}/{storedProcedure}", ex));
+                logger.LogError(GetLogMessage($"{callerMemberName}/{storedProcedureName}", ex));
+                return default;
+            }
+        }
+
+        /// <summary>
+        /// Runs a stored procedure on a sql server database.
+        /// </summary>
+        /// <typeparam name="TInputParam"></typeparam>
+        /// <param name="storedProcedureName">The name of the stored procedure</param>
+        /// <param name="paramObject">An object containing input , output and return parameters of the stored procedure.</param>
+        /// <param name="dbType">The database type.</param>
+        /// <param name="callerMemberName">The name of the calling function. (used for logging)</param>
+        /// <returns></returns>
+        protected Task<DynamicParameters> RunStoredProcedure<TInputParam>(string storedProcedureName, TInputParam paramObject, DbType dbType,
+             [CallerMemberName] string callerMemberName = "")
+        {
+            try
+            {
+                var dynamicParameters = new DynamicParameters();
+
+                if (paramObject != null)
+                    dynamicParameters = CreateDynamicParameter(paramObject);
+
+                var connectionString = GetConnectionString(string.Empty, dbType);
+                if (string.IsNullOrWhiteSpace(connectionString))
+                    throw new NullReferenceException("ConnectionStrings.SqlServerConnection is null, please set a default value for sqlserver connection.");
+
+                DapperOrmExecutor.ExecuteCommandProc(storedProcedureName, ConnectionStrings.SqlServerConnection, dynamicParameters);
+                return Task.FromResult(dynamicParameters);
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(GetLogMessage($"{callerMemberName}/{storedProcedureName}", ex));
                 return default;
             }
         }
@@ -814,19 +835,19 @@
             var connectionStringMap = new Dictionary<DbType, string>()
             {
                 {DbType.SqlServer,ConnectionStrings.SqlServerConnection },
-                {DbType.SybaseServer,ConnectionStrings.SybaseConnection },
-                {DbType.OracleServer,ConnectionStrings.OracleConnection },
+                {DbType.Sybase,ConnectionStrings.SybaseConnection },
+                {DbType.Oracle,ConnectionStrings.OracleConnection },
             };
 
             var dbTypeNameMap = new Dictionary<DbType, string>()
             {
                 {DbType.SqlServer,"SqlServer database" },
-                {DbType.SybaseServer,"Sybase database" },
-                {DbType.OracleServer,"Oracle database" },
+                {DbType.Sybase,"Sybase database" },
+                {DbType.Oracle,"Oracle database" },
             };
             var connectionString = connectionStringMap[sqlType];
             if (string.IsNullOrEmpty(connectionString))
-                throw new ArgumentNullException($"Connection string for {dbTypeNameMap[sqlType]} in BaseAppConfig is not setup.Please pass in connectionString or setup BaseAppConfig");
+                throw new ArgumentNullException($"Default Connection string for {dbTypeNameMap[sqlType]} is not setup.Please pass in connectionString or setup a default connection string.");
             return connectionString;
         }
 

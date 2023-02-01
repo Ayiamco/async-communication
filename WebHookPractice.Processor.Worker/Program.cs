@@ -10,9 +10,9 @@ using WebHooks.SharedKernel.Services.Interfaces;
 IHost host = Host.CreateDefaultBuilder(args)
     .ConfigureServices((builder, services) =>
     {
-        services.AddConnectionStrings((options) =>
+        services.AddBaseRepostiorySetup((options) =>
         {
-            options.SqlServerConnectionString = builder.Configuration["ConnectionStrings:SqlServerConnection"];
+            options.DefaultSqlServerConnectionString = builder.Configuration["ConnectionStrings:SqlServerConnection"];
         });
         services.AddSingleton(typeof(IRefitHttpClientFactory<>), typeof(RefitHttpClientFactory<>));
         services.AddRefitClient<IApiClients>();

@@ -9,9 +9,9 @@ var services = builder.Services;
 
 
 //Add services to the container.
-services.AddConnectionStrings((options) =>
+services.AddBaseRepostiorySetup((options) =>
 {
-    options.SqlServerConnectionString = builder.Configuration["ConnectionStrings:SqlServerConnection"];
+    options.DefaultSqlServerConnectionString = builder.Configuration["ConnectionStrings:SqlServerConnection"];
 });
 services.AddSingleton<ITransferCashTopicProducer, TransferCashTopicProducer>();
 services.AddRepositories();

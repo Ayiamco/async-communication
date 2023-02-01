@@ -16,9 +16,19 @@ namespace WebHooks.SharedKernel.Infrastructure
             logger.LogError(message);
         }
 
+        public void LogError(string message, Exception ex)
+        {
+            throw new NotImplementedException();
+        }
+
         public void LogInformation(string message)
         {
             logger.LogInformation(message);
+        }
+
+        public void LogInformation(string message, Exception ex)
+        {
+            throw new NotImplementedException();
         }
     }
 }
