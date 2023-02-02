@@ -395,7 +395,7 @@
                 if (queryParam.GetType() == typeof(string))
                     throw new ArgumentException("queryParam must be an object containing the sqlCommand queryParam parameters");
 
-                DapperOrmExecutor.ExecuteCommand(sqlCommand, GetConnectionString(string.Empty, DbType.SqlServer), queryParam);
+                DapperOrmExecutor.ExecuteCommand(sqlCommand, BaseUtility.GetConnectionString(string.Empty, DbType.SqlServer), queryParam);
                 logger.LogInformation($"Successfully ran command from function: {callerMemberName}");
                 return Task.FromResult(CommandResp.Success);
             }
@@ -404,7 +404,7 @@
                 if (ex.Message.Contains("Violation of UNIQUE KEY constraint"))
                     return Task.FromResult(CommandResp.UniqueKeyViolation);
 
-                logger.LogError(GetLogMessage(callerMemberName, ex));
+                logger.LogError(BaseUtility.GetLogMessage(callerMemberName, ex));
                 return Task.FromResult(CommandResp.Failure);
             }
         }
@@ -426,7 +426,7 @@
                     throw new ArgumentException("queryParam must be an object containing the sqlCommand queryParam parameters");
 
                 connectionString = string.IsNullOrWhiteSpace(connectionString) ?
-                    GetConnectionString(connectionString, DbType.SqlServer) : connectionString;
+                    BaseUtility.GetConnectionString(connectionString, DbType.SqlServer) : connectionString;
 
                 DapperOrmExecutor.ExecuteCommand(sqlCommand, connectionString, queryParam);
                 logger.LogInformation($"Successfully ran command from function: {callerMemberName}");
@@ -437,7 +437,7 @@
                 if (ex.Message.Contains("Violation of UNIQUE KEY constraint"))
                     return Task.FromResult(CommandResp.UniqueKeyViolation);
 
-                logger.LogError(GetLogMessage(callerMemberName, ex));
+                logger.LogError(BaseUtility.GetLogMessage(callerMemberName, ex));
                 return Task.FromResult(CommandResp.Failure);
             }
         }
@@ -465,7 +465,7 @@
                 if (queryParam.GetType() == typeof(string))
                     throw new ArgumentException("queryParam must be an object containing the sqlCommand queryParam parameters");
 
-                CommandsMap[commandType](sqlCommand, GetConnectionString(string.Empty, map[commandType]), queryParam);
+                CommandsMap[commandType](sqlCommand, BaseUtility.GetConnectionString(string.Empty, map[commandType]), queryParam);
                 logger.LogInformation($"Successfully ran command from function: {callerMemberName}");
                 return Task.FromResult(CommandResp.Success);
             }
@@ -474,7 +474,7 @@
                 if (ex.Message.Contains("Violation of UNIQUE KEY constraint"))
                     return Task.FromResult(CommandResp.UniqueKeyViolation);
 
-                logger.LogError(GetLogMessage(callerMemberName, ex));
+                logger.LogError(BaseUtility.GetLogMessage(callerMemberName, ex));
                 return Task.FromResult(CommandResp.Failure);
             }
         }
@@ -503,7 +503,7 @@
                 };
 
                 connectionString = string.IsNullOrWhiteSpace(connectionString) ?
-                    GetConnectionString(connectionString, map[commandType]) : connectionString;
+                    BaseUtility.GetConnectionString(connectionString, map[commandType]) : connectionString;
                 CommandsMap[commandType](sqlCommand, connectionString, queryParam);
                 logger.LogInformation($"Successfully ran command from function: {callerMemberName}");
                 return Task.FromResult(CommandResp.Success);
@@ -513,7 +513,7 @@
                 if (ex.Message.Contains("Violation of UNIQUE KEY constraint"))
                     return Task.FromResult(CommandResp.UniqueKeyViolation);
 
-                logger.LogError(GetLogMessage(callerMemberName, ex));
+                logger.LogError(BaseUtility.GetLogMessage(callerMemberName, ex));
                 return Task.FromResult(CommandResp.Failure);
             }
         }
@@ -544,7 +544,7 @@
             }
             catch (Exception ex)
             {
-                logger.LogError(GetLogMessage(callerMemberName, ex));
+                logger.LogError(BaseUtility.GetLogMessage(callerMemberName, ex));
                 return Task.FromResult(Enumerable.Empty<TResult>());
             }
         }
@@ -563,7 +563,7 @@
             }
             catch (Exception ex)
             {
-                logger.LogError(GetLogMessage(callerMemberName, ex));
+                logger.LogError(BaseUtility.GetLogMessage(callerMemberName, ex));
                 return Task.FromResult(Enumerable.Empty<TResult>());
             }
         }
@@ -582,7 +582,7 @@
             }
             catch (Exception ex)
             {
-                logger.LogError(GetLogMessage(callerMemberName, ex));
+                logger.LogError(BaseUtility.GetLogMessage(callerMemberName, ex));
                 return Task.FromResult(Enumerable.Empty<TResult>());
             }
         }
@@ -613,7 +613,7 @@
             }
             catch (Exception ex)
             {
-                logger.LogError(GetLogMessage(callerMemberName, ex));
+                logger.LogError(BaseUtility.GetLogMessage(callerMemberName, ex));
                 return Task.FromResult(Enumerable.Empty<TResult>());
             }
         }
@@ -644,7 +644,7 @@
             }
             catch (Exception ex)
             {
-                logger.LogError(GetLogMessage(callerMemberName, ex));
+                logger.LogError(BaseUtility.GetLogMessage(callerMemberName, ex));
                 return Task.FromResult(Enumerable.Empty<TResult>());
             }
         }
@@ -675,7 +675,7 @@
             }
             catch (Exception ex)
             {
-                logger.LogError(GetLogMessage(callerMemberName, ex));
+                logger.LogError(BaseUtility.GetLogMessage(callerMemberName, ex));
                 return Task.FromResult(Enumerable.Empty<TResult>());
             }
         }
@@ -706,7 +706,7 @@
             }
             catch (Exception ex)
             {
-                logger.LogError(GetLogMessage(callerMemberName, ex));
+                logger.LogError(BaseUtility.GetLogMessage(callerMemberName, ex));
                 return Task.FromResult(Enumerable.Empty<TResult>());
             }
         }
@@ -737,8 +737,8 @@
             }
             catch (Exception ex)
             {
-                logger.LogError(GetLogMessage($"{callerMemberName}/{storedProcedureName}", ex));
-                return default;
+                logger.LogError(BaseUtility.GetLogMessage($"{callerMemberName}/{storedProcedureName}", ex));
+                return Task.FromResult(new DynamicParameters()); ;
             }
         }
 
@@ -761,17 +761,26 @@
                 if (paramObject != null)
                     dynamicParameters = CreateDynamicParameter(paramObject);
 
-                var connectionString = GetConnectionString(string.Empty, dbType);
-                if (string.IsNullOrWhiteSpace(connectionString))
-                    throw new NullReferenceException("ConnectionStrings.SqlServerConnection is null, please set a default value for sqlserver connection.");
+                var connectionString = BaseUtility.GetConnectionString(string.Empty, dbType);
 
-                DapperOrmExecutor.ExecuteCommandProc(storedProcedureName, ConnectionStrings.SqlServerConnection, dynamicParameters);
+                switch (dbType)
+                {
+                    case DbType.SqlServer:
+                        DapperOrmExecutor.ExecuteCommandProc(storedProcedureName, connectionString, dynamicParameters);
+                        break;
+                    case DbType.Sybase:
+                        DapperOrmExecutor.ExecuteSybaseCommandProc(storedProcedureName, connectionString, dynamicParameters);
+                        break;
+                    case DbType.Oracle:
+                        DapperOrmExecutor.ExecuteOracleCommandProc(storedProcedureName, connectionString, dynamicParameters);
+                        break;
+                }
                 return Task.FromResult(dynamicParameters);
             }
             catch (Exception ex)
             {
-                logger.LogError(GetLogMessage($"{callerMemberName}/{storedProcedureName}", ex));
-                return default;
+                logger.LogError(BaseUtility.GetLogMessage($"{callerMemberName}/{storedProcedureName}", ex));
+                return Task.FromResult(new DynamicParameters());
             }
         }
 
@@ -798,7 +807,7 @@
                     dynamicParameters.Add(key, value);
                     continue;
                 }
-                AddOutputParam(dynamicParameters, key, attrs);
+                BaseUtility.AddOutputParam(dynamicParameters, key, attrs);
             }
             return dynamicParameters;
         }
@@ -815,62 +824,28 @@
             }
             catch (Exception ex)
             {
-                logger.LogError(GetLogMessage(callerMemberName, ex));
+                logger.LogError(BaseUtility.GetLogMessage(callerMemberName, ex));
+
+                //TODO: Find a better return type for failure
                 return default;
             }
         }
 
-
-        #region private methods
-        private string GetLogMessage(string name, Exception ex) =>
-            @$"Error occured at while running query from function :{name}; Message:{ex.Message}. 
-{ex.StackTrace}";
-
-        private static string GetConnectionString(string? conn, DbType sqlType)
+        public TResult GetOutput<TResult>(DynamicParameters storedProcedureRespone)
         {
-            if (!string.IsNullOrWhiteSpace(conn)) return conn;
-
-
-            //TODO: Finish map
-            var connectionStringMap = new Dictionary<DbType, string>()
+            var resultInstance = Activator.CreateInstance<TResult>();
+            var properties = resultInstance.GetType().GetProperties();
+            var DynamicParametersGetFuncGenericRef = typeof(DynamicParameters).GetMethod("Get");
+            foreach (var prop in properties)
             {
-                {DbType.SqlServer,ConnectionStrings.SqlServerConnection },
-                {DbType.Sybase,ConnectionStrings.SybaseConnection },
-                {DbType.Oracle,ConnectionStrings.OracleConnection },
-            };
+                var propName = prop.Name;
+                var type = prop.PropertyType;
 
-            var dbTypeNameMap = new Dictionary<DbType, string>()
-            {
-                {DbType.SqlServer,"SqlServer database" },
-                {DbType.Sybase,"Sybase database" },
-                {DbType.Oracle,"Oracle database" },
-            };
-            var connectionString = connectionStringMap[sqlType];
-            if (string.IsNullOrEmpty(connectionString))
-                throw new ArgumentNullException($"Default Connection string for {dbTypeNameMap[sqlType]} is not setup.Please pass in connectionString or setup a default connection string.");
-            return connectionString;
-        }
-
-        private static void AddOutputParam(DynamicParameters dynamicParameters, string propName, Attribute[] customAttributes)
-        {
-            foreach (var attr in customAttributes)
-            {
-                var attributeType = attr.GetType();
-                if (attributeType == typeof(SpOutputStringAttribute))
-                    dynamicParameters.Add(propName, dbType: System.Data.DbType.String, direction: ParameterDirection.Output, size: (int)attributeType.GetProperties().Where<System.Reflection.PropertyInfo>(x => x.Name == nameof(SpOutputStringAttribute.Size)).First().GetValue(attr));
-                if (attributeType == typeof(SpReturnStringAttribute))
-                    dynamicParameters.Add(propName, dbType: System.Data.DbType.String, direction: ParameterDirection.ReturnValue, size: (int)attributeType.GetProperties().Where<System.Reflection.PropertyInfo>(x => x.Name == nameof(SpReturnStringAttribute.Size)).First().GetValue(attr));
-                if (attributeType == typeof(SpReturnIntAttribute))
-                    dynamicParameters.Add(propName, dbType: System.Data.DbType.Int32, direction: ParameterDirection.ReturnValue);
-                if (attributeType == typeof(SpOutputIntAttribute))
-                    dynamicParameters.Add(propName, dbType: System.Data.DbType.Int32, direction: ParameterDirection.Output);
-                if (attributeType == typeof(SpReturnBigIntAttribute))
-                    dynamicParameters.Add(propName, dbType: System.Data.DbType.Int64, direction: ParameterDirection.ReturnValue);
-                if (attributeType == typeof(SpOutputBigIntAttribute))
-                    dynamicParameters.Add(propName, dbType: System.Data.DbType.Int64, direction: ParameterDirection.Output);
+                var DynamicParametersGetFuncRef = DynamicParametersGetFuncGenericRef.MakeGenericMethod(type);
+                var value = DynamicParametersGetFuncRef.Invoke(storedProcedureRespone, new string[] { propName });
+                prop.SetValue(resultInstance, value);
             }
+            return resultInstance;
         }
-
-        #endregion
     }
 }

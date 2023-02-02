@@ -1,9 +1,8 @@
-﻿using Dapper.Repository.interfaces;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 
 namespace WebHooks.SharedKernel.Infrastructure
 {
-    public class AppLogger<T> : IBaseRepositoryLogger<T>, IAppLogger<T>
+    public class AppLogger<T> : IAppLogger<T>
     {
         private readonly ILogger<T> logger;
 
