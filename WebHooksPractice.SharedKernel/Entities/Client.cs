@@ -1,15 +1,28 @@
-﻿namespace WebHooks.SharedKernel.Entities
+﻿using Dapper.BaseRepository.Attributes;
+
+namespace WebHooks.SharedKernel.Entities
 {
-    public record Client
+    public record Client : GetClientOutputParam
     {
-        public Guid Id { get; set; }
 
         public string ClientName { get; set; }
-
-        public string HandlerUrl { get; set; }
 
         public DateTime CreatedAt { get; set; }
 
         public DateTime UpdatedAt { get; set; }
+    }
+
+    public record GetClientParam : GetClientOutputParam
+    {
+        public Guid clientId { get; set; }
+    }
+
+    public record GetClientOutputParam
+    {
+        [SpOutputGuid]
+        public Guid Id { get; set; }
+
+        [SpOutputString(int.MaxValue)]
+        public string HandlerUrl { get; set; }
     }
 }

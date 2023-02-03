@@ -20,18 +20,29 @@ VALUES (@ClientName, @HandlerUrl, @Id)";
             return await RunCommand(sql, request);
         }
 
+        //        public async Task<Client> GetClient(Guid clientId)
+        //        {
+        //            var sql = $@"
+        //SELECT HandlerUrl,Id FROM clients
+        //WHERE Id = @clientId
+        //";
+        //            var resp = await RunQuery<Client>(sql, new { clientId });
+
+        //            if (resp == null || !resp.Any())
+        //                throw new ClientDoesNotExistException();
+
+        //            return resp.First();
+        //        } 
+
         public async Task<Client> GetClient(Guid clientId)
         {
-            var sql = $@"
-SELECT HandlerUrl,Id FROM clients
-WHERE Id = @clientId
-";
-            var resp = await RunQuery<Client>(sql, new { clientId });
-
-            if (resp == null || !resp.Any())
+            var resp = await RunStoredProcedure("GetClient", new GetClientParam { clientId = clientId });
+            var output = GetOutput<GetClientOutputParam>(resp);
+            var i = resp.Get<Guid?>("Id");
+            if (resp == null)
                 throw new ClientDoesNotExistException();
 
-            return resp.First();
+            return new Client { Id = output.Id, HandlerUrl = output.HandlerUrl };
         }
 
 

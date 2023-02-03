@@ -52,4 +52,10 @@
     {
 
     }
+
+    [AttributeUsage(AttributeTargets.Property)]
+    public class SpOutputGuid : Attribute
+    {
+
+    }
 }

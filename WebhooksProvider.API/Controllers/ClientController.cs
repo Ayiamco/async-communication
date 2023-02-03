@@ -33,6 +33,11 @@ namespace Webhooks.App.Api.Controllers
 
         }
 
+        //[HttpGet("{id}")]
+        //public async Task<IActionResult> GetClient(Guid id, CancellationToken cancellationToken)
+        //{
+
+        //}
         [HttpPost("transfer")]
         public async Task<IActionResult> Transfer(TransferCash.Command command, CancellationToken cancellationToken)
         {

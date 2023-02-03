@@ -53,6 +53,10 @@ namespace Dapper.BaseRepository.Components
                     dynamicParameters.Add(propName, dbType: System.Data.DbType.Int64, direction: ParameterDirection.ReturnValue);
                 if (attributeType == typeof(SpOutputBigIntAttribute))
                     dynamicParameters.Add(propName, dbType: System.Data.DbType.Int64, direction: ParameterDirection.Output);
+                if (attributeType == typeof(SpOutputGuid))
+                    dynamicParameters.Add(propName, dbType: System.Data.DbType.Guid, direction: ParameterDirection.Output);
+                if (attributeType == typeof(SpOutputDateTime))
+                    dynamicParameters.Add(propName, dbType: System.Data.DbType.DateTime, direction: ParameterDirection.Output);
             }
         }
 
