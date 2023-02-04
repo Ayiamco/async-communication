@@ -36,13 +36,11 @@ VALUES (@ClientName, @HandlerUrl, @Id)";
 
         public async Task<Client> GetClient(Guid clientId)
         {
-            var resp = await RunStoredProcedure("GetClient", new GetClientParam { clientId = clientId });
-            var output = GetOutput<GetClientOutputParam>(resp);
-            var i = resp.Get<Guid?>("Id");
+            var resp = await RunStoredProcedure<GetClientParam, GetClientOutputParam>("GetClient", new GetClientParam { clientId = clientId });
             if (resp == null)
                 throw new ClientDoesNotExistException();
 
-            return new Client { Id = output.Id, HandlerUrl = output.HandlerUrl };
+            return new Client { Id = resp.Id, HandlerUrl = resp.HandlerUrl };
         }
 
 

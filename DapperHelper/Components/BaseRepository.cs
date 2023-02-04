@@ -714,12 +714,13 @@
         /// <summary>
         /// Runs a stored procedure on a sql server database.
         /// </summary>
-        /// <typeparam name="TInputParam"></typeparam>
+        /// <typeparam name="TParam">The stored procedure parameters including input, output and return parameters.</typeparam>
+        /// <typeparam name="TResult">The result returned from the stored procedure including output and return parameters. </typeparam>
         /// <param name="storedProcedureName">The name of the stored procedure</param>
         /// <param name="paramObject">An object containing input , output and return parameters of the stored procedure.</param>
         /// <param name="callerMemberName">The name of the calling function. (used for logging)</param>
         /// <returns></returns>
-        protected Task<DynamicParameters> RunStoredProcedure<TInputParam>(string storedProcedureName, TInputParam paramObject,
+        protected Task<TResult> RunStoredProcedure<TParam, TResult>(string storedProcedureName, TParam paramObject,
              [CallerMemberName] string callerMemberName = "")
         {
             try
@@ -727,18 +728,18 @@
                 var dynamicParameters = new DynamicParameters();
 
                 if (paramObject != null)
-                    dynamicParameters = CreateDynamicParameter(paramObject);
+                    dynamicParameters = BaseUtility.CreateDynamicParameter(paramObject);
 
                 if (string.IsNullOrWhiteSpace(ConnectionStrings.SqlServerConnection))
                     throw new NullReferenceException("ConnectionStrings.SqlServerConnection is null, please set a default value for sqlserver connection.");
 
                 DapperOrmExecutor.ExecuteCommandProc(storedProcedureName, ConnectionStrings.SqlServerConnection, dynamicParameters);
-                return Task.FromResult(dynamicParameters);
+                return Task.FromResult(GetStoredProcedureResult<TResult>(dynamicParameters));
             }
             catch (Exception ex)
             {
                 logger.LogError(BaseUtility.GetLogMessage($"{callerMemberName}/{storedProcedureName}", ex));
-                return Task.FromResult(new DynamicParameters()); ;
+                return Task.FromResult(Activator.CreateInstance<TResult>()); ;
             }
         }
 
@@ -759,7 +760,7 @@
                 var dynamicParameters = new DynamicParameters();
 
                 if (paramObject != null)
-                    dynamicParameters = CreateDynamicParameter(paramObject);
+                    dynamicParameters = BaseUtility.CreateDynamicParameter(paramObject);
 
                 var connectionString = BaseUtility.GetConnectionString(string.Empty, dbType);
 
@@ -784,34 +785,6 @@
             }
         }
 
-        /// <summary>
-        /// Creates <see cref="DynamicParameters"/> object or adds additional parameters from the storedProcParams.
-        /// </summary>
-        /// <param name="storedProcParams">Object containing stored proc input, outpust and return paramaters</param>
-        /// <param name="dynamicParameters">Dynamic parameter that the storedProcParams would be added to.</param>
-        /// <returns><see cref=" DynamicParameters "/> containing the stored procedure input, output and return parameters.</returns>
-        protected DynamicParameters CreateDynamicParameter(object storedProcParams, DynamicParameters? dynamicParameters = default)
-        {
-            dynamicParameters = dynamicParameters == null ? new DynamicParameters() : dynamicParameters;
-            if (storedProcParams == null)
-                return dynamicParameters;
-
-            var properties = storedProcParams.GetType().GetProperties();
-            foreach (var prop in properties)
-            {
-                var key = prop.Name;
-                Attribute[] attrs = Attribute.GetCustomAttributes(prop);
-                if (attrs.Length == 0)
-                {
-                    var value = prop.GetValue(storedProcParams);
-                    dynamicParameters.Add(key, value);
-                    continue;
-                }
-                BaseUtility.AddOutputParam(dynamicParameters, key, attrs);
-            }
-            return dynamicParameters;
-        }
-
         protected Task<decimal?> RunScalar(string query, [CallerMemberName] string callerMemberName = "")
         {
             try
@@ -829,23 +802,6 @@
                 //TODO: Find a better return type for failure
                 return default;
             }
-        }
-
-        public TResult GetOutput<TResult>(DynamicParameters storedProcedureRespone)
-        {
-            var resultInstance = Activator.CreateInstance<TResult>();
-            var properties = resultInstance.GetType().GetProperties();
-            var DynamicParametersGetFuncGenericRef = typeof(DynamicParameters).GetMethod("Get");
-            foreach (var prop in properties)
-            {
-                var propName = prop.Name;
-                var type = prop.PropertyType;
-
-                var DynamicParametersGetFuncRef = DynamicParametersGetFuncGenericRef.MakeGenericMethod(type);
-                var value = DynamicParametersGetFuncRef.Invoke(storedProcedureRespone, new string[] { propName });
-                prop.SetValue(resultInstance, value);
-            }
-            return resultInstance;
         }
     }
 }

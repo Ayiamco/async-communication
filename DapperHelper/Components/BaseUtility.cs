@@ -60,6 +60,51 @@ namespace Dapper.BaseRepository.Components
             }
         }
 
+        internal static TResult GetStoredProcedureResult<TResult>(DynamicParameters storedProcedureRespone)
+        {
+            var resultInstance = Activator.CreateInstance<TResult>();
+            var properties = resultInstance.GetType().GetProperties();
+            var DynamicParametersGetFuncGenericRef = typeof(DynamicParameters).GetMethod("Get");
+            foreach (var prop in properties)
+            {
+                var propName = prop.Name;
+                var type = prop.PropertyType;
+
+                var DynamicParametersGetFuncRef = DynamicParametersGetFuncGenericRef.MakeGenericMethod(type);
+                var value = DynamicParametersGetFuncRef.Invoke(storedProcedureRespone, new string[] { propName });
+                prop.SetValue(resultInstance, value);
+            }
+            return resultInstance;
+        }
+
+
+        /// <summary>
+        /// Creates <see cref="DynamicParameters"/> object or adds additional parameters from the storedProcParams.
+        /// </summary>
+        /// <param name="storedProcParams">Object containing stored proc input, outpust and return paramaters</param>
+        /// <param name="dynamicParameters">Dynamic parameter that the storedProcParams would be added to.</param>
+        /// <returns><see cref=" DynamicParameters "/> containing the stored procedure input, output and return parameters.</returns>
+        internal static DynamicParameters CreateDynamicParameter(object storedProcParams, DynamicParameters? dynamicParameters = default)
+        {
+            dynamicParameters = dynamicParameters == null ? new DynamicParameters() : dynamicParameters;
+            if (storedProcParams == null)
+                return dynamicParameters;
+
+            var properties = storedProcParams.GetType().GetProperties();
+            foreach (var prop in properties)
+            {
+                var key = prop.Name;
+                Attribute[] attrs = Attribute.GetCustomAttributes(prop);
+                if (attrs.Length == 0)
+                {
+                    var value = prop.GetValue(storedProcParams);
+                    dynamicParameters.Add(key, value);
+                    continue;
+                }
+                BaseUtility.AddOutputParam(dynamicParameters, key, attrs);
+            }
+            return dynamicParameters;
+        }
         #endregion
     }
 }
