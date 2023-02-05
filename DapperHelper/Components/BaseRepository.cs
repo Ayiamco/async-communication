@@ -346,8 +346,8 @@
             foreach (var attr in customAttributes)
             {
                 var attributeType = attr.GetType();
-                if (attributeType == typeof(SpOutputStringAttribute))
-                    dynamicParameters.Add(propName, dbType: System.Data.DbType.String, direction: ParameterDirection.Output, size: (int)attributeType.GetProperties().Where<System.Reflection.PropertyInfo>(x => x.Name == nameof(SpOutputStringAttribute.Size)).First().GetValue(attr));
+                if (attributeType == typeof(SpOutputAnsiStringAttribute))
+                    dynamicParameters.Add(propName, dbType: System.Data.DbType.String, direction: ParameterDirection.Output, size: (int)attributeType.GetProperties().Where<System.Reflection.PropertyInfo>(x => x.Name == nameof(SpOutputAnsiStringAttribute.Length)).First().GetValue(attr));
                 if (attributeType == typeof(SpReturnStringAttribute))
                     dynamicParameters.Add(propName, dbType: System.Data.DbType.String, direction: ParameterDirection.ReturnValue, size: (int)attributeType.GetProperties().Where<System.Reflection.PropertyInfo>(x => x.Name == nameof(SpReturnStringAttribute.Size)).First().GetValue(attr));
                 if (attributeType == typeof(SpReturnIntAttribute))
@@ -714,10 +714,10 @@
         /// <summary>
         /// Runs a stored procedure on a sql server database.
         /// </summary>
-        /// <typeparam name="TParam">The stored procedure parameters including input, output and return parameters.</typeparam>
-        /// <typeparam name="TResult">The result returned from the stored procedure including output and return parameters. </typeparam>
+        /// <typeparam name="TParam">The type of the object containing the stored procedure parameters including input, output and return parameters.</typeparam>
+        /// <typeparam name="TResult">The type of the object containing the result returned from the stored procedure including output and return parameters. </typeparam>
         /// <param name="storedProcedureName">The name of the stored procedure</param>
-        /// <param name="paramObject">An object containing input , output and return parameters of the stored procedure.</param>
+        /// <param name="paramObject">An object containing the input , output and return parameters of the stored procedure.</param>
         /// <param name="callerMemberName">The name of the calling function. (used for logging)</param>
         /// <returns></returns>
         protected Task<TResult> RunStoredProcedure<TParam, TResult>(string storedProcedureName, TParam paramObject,
@@ -746,13 +746,14 @@
         /// <summary>
         /// Runs a stored procedure on a sql server database.
         /// </summary>
-        /// <typeparam name="TInputParam"></typeparam>
+        /// <typeparam name="TParam">The type of the object containing the stored procedure parameters including input, output and return parameters.</typeparam>
+        /// <typeparam name="TResult">The type of the object containing the result returned from the stored procedure including output and return parameters. </typeparam>
         /// <param name="storedProcedureName">The name of the stored procedure</param>
         /// <param name="paramObject">An object containing input , output and return parameters of the stored procedure.</param>
         /// <param name="dbType">The database type.</param>
         /// <param name="callerMemberName">The name of the calling function. (used for logging)</param>
         /// <returns></returns>
-        protected Task<TResult> RunStoredProcedure<TInputParam, TResult>(string storedProcedureName, TInputParam paramObject, DbType dbType,
+        protected Task<TResult> RunStoredProcedure<TParam, TResult>(string storedProcedureName, TParam paramObject, DbType dbType,
              [CallerMemberName] string callerMemberName = "")
         {
             try

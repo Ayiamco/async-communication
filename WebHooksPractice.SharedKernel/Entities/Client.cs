@@ -22,7 +22,7 @@ namespace WebHooks.SharedKernel.Entities
         [SpOutputGuid]
         public Guid Id { get; set; }
 
-        [SpOutputString(int.MaxValue)]
+        [SpOutputAnsiString(int.MaxValue)]
         public string HandlerUrl { get; set; }
     }
 }
