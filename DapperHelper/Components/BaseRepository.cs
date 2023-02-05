@@ -1,10 +1,8 @@
 ﻿namespace Dapper.BaseRepository.Components
 {
     using Dapper;
-    using Dapper.BaseRepository.Attributes;
     using Dapper.BaseRepository.Config;
     using Dapper.Repository.interfaces;
-    using System.Data;
     using System.Runtime.CompilerServices;
 
     /// <summary>
@@ -296,7 +294,7 @@
                     dynamicParameters.Add(key, value);
                     continue;
                 }
-                AddOutputParam(dynamicParameters, key, attrs);
+                BaseUtility.AddOutputParam(dynamicParameters, key, attrs);
             }
             return dynamicParameters;
         }
@@ -341,25 +339,6 @@
             return connectionString;
         }
 
-        private static void AddOutputParam(DynamicParameters dynamicParameters, string propName, Attribute[] customAttributes)
-        {
-            foreach (var attr in customAttributes)
-            {
-                var attributeType = attr.GetType();
-                if (attributeType == typeof(SpOutputAnsiStringAttribute))
-                    dynamicParameters.Add(propName, dbType: System.Data.DbType.String, direction: ParameterDirection.Output, size: (int)attributeType.GetProperties().Where<System.Reflection.PropertyInfo>(x => x.Name == nameof(SpOutputAnsiStringAttribute.Length)).First().GetValue(attr));
-                if (attributeType == typeof(SpReturnStringAttribute))
-                    dynamicParameters.Add(propName, dbType: System.Data.DbType.String, direction: ParameterDirection.ReturnValue, size: (int)attributeType.GetProperties().Where<System.Reflection.PropertyInfo>(x => x.Name == nameof(SpReturnStringAttribute.Size)).First().GetValue(attr));
-                if (attributeType == typeof(SpReturnIntAttribute))
-                    dynamicParameters.Add(propName, dbType: System.Data.DbType.Int32, direction: ParameterDirection.ReturnValue);
-                if (attributeType == typeof(SpOutputIntAttribute))
-                    dynamicParameters.Add(propName, dbType: System.Data.DbType.Int32, direction: ParameterDirection.Output);
-                if (attributeType == typeof(SpReturnBigIntAttribute))
-                    dynamicParameters.Add(propName, dbType: System.Data.DbType.Int64, direction: ParameterDirection.ReturnValue);
-                if (attributeType == typeof(SpOutputBigIntAttribute))
-                    dynamicParameters.Add(propName, dbType: System.Data.DbType.Int64, direction: ParameterDirection.Output);
-            }
-        }
 
         #endregion
     }

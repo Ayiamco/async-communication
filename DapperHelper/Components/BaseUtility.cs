@@ -45,22 +45,31 @@ namespace Dapper.BaseRepository.Components
                 switch (attributeName)
                 {
                     //Stored Procedure Output section
-                    case "SpOutputAnsiStringAttribute":
-                        dynamicParameters.Add(propName, dbType: System.Data.DbType.String, direction: ParameterDirection.Output, size: (int)attributeType.GetProperties().Where(x => x.Name == nameof(SpOutputAnsiStringAttribute.Length)).First().GetValue(attr));
+                    case nameof(SpOutputString):
+                        dynamicParameters.Add(propName, dbType: System.Data.DbType.String, direction: ParameterDirection.Output, size: (int)attributeType.GetProperties().Where(x => x.Name == nameof(SpOutputString.Length)).First().GetValue(attr));
                         break;
-                    case "SpOutputIntAttribute":
+                    case nameof(SpOutputStringFixed):
+                        dynamicParameters.Add(propName, dbType: System.Data.DbType.String, direction: ParameterDirection.Output, size: (int)attributeType.GetProperties().Where(x => x.Name == nameof(SpOutputStringFixed.Length)).First().GetValue(attr));
+                        break;
+                    case nameof(SpOutputAnsiString):
+                        dynamicParameters.Add(propName, dbType: System.Data.DbType.AnsiString, direction: ParameterDirection.Output, size: (int)attributeType.GetProperties().Where(x => x.Name == nameof(SpOutputAnsiString.Length)).First().GetValue(attr));
+                        break;
+                    case nameof(SpOutputAnsiStringFixed):
+                        dynamicParameters.Add(propName, dbType: System.Data.DbType.AnsiString, direction: ParameterDirection.Output, size: (int)attributeType.GetProperties().Where(x => x.Name == nameof(SpOutputAnsiStringFixed.Length)).First().GetValue(attr));
+                        break;
+                    case nameof(SpOutputInt):
                         dynamicParameters.Add(propName, dbType: System.Data.DbType.Int32, direction: ParameterDirection.Output);
                         break;
-                    case "SpOutputBigIntAttribute":
+                    case nameof(SpOutputBigInt):
                         dynamicParameters.Add(propName, dbType: System.Data.DbType.Int64, direction: ParameterDirection.Output);
                         break;
-                    case "SpOutputDateTime":
+                    case nameof(SpOutputDateTime):
                         dynamicParameters.Add(propName, dbType: System.Data.DbType.DateTime, direction: ParameterDirection.Output);
                         break;
-                    case "SpOutputDate":
+                    case nameof(SpOutputDate):
                         dynamicParameters.Add(propName, dbType: System.Data.DbType.Date, direction: ParameterDirection.Output);
                         break;
-                    case "SpOutputGuid":
+                    case nameof(SpOutputGuid):
                         dynamicParameters.Add(propName, dbType: System.Data.DbType.Guid, direction: ParameterDirection.Output);
                         break;
 

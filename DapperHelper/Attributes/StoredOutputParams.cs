@@ -6,11 +6,11 @@ namespace Dapper.BaseRepository.Attributes
     /// Attribute for DbType <see cref="DbType.String"/>
     /// </summary>
     [AttributeUsage(AttributeTargets.Property)]
-    public class SpOutputStringAttribute : Attribute
+    public class SpOutputString : Attribute
     {
         public int Length { get; set; }
 
-        public SpOutputStringAttribute(int Length)
+        public SpOutputString(int Length)
         {
             this.Length = Length;
         }
@@ -20,11 +20,11 @@ namespace Dapper.BaseRepository.Attributes
     /// Attribute for DbType <see cref="DbType.StringFixedLength"/>
     /// </summary>
     [AttributeUsage(AttributeTargets.Property)]
-    public class SpOutputStringFixedAttribute : Attribute
+    public class SpOutputStringFixed : Attribute
     {
         public int Length { get; set; }
 
-        public SpOutputStringFixedAttribute(int Length)
+        public SpOutputStringFixed(int Length)
         {
             this.Length = Length;
         }
@@ -34,11 +34,11 @@ namespace Dapper.BaseRepository.Attributes
     /// Attribute for DbType <see cref="DbType.AnsiString"/>
     /// </summary>
     [AttributeUsage(AttributeTargets.Property)]
-    public class SpOutputAnsiStringAttribute : Attribute
+    public class SpOutputAnsiString : Attribute
     {
         public int Length { get; set; }
 
-        public SpOutputAnsiStringAttribute(int Length)
+        public SpOutputAnsiString(int Length)
         {
             this.Length = Length;
         }
@@ -48,11 +48,11 @@ namespace Dapper.BaseRepository.Attributes
     /// Attribute for DbType <see cref="DbType.AnsiStringFixedLength"/>
     /// </summary>
     [AttributeUsage(AttributeTargets.Property)]
-    public class SpOutputAnsiStringFixedAttribute : Attribute
+    public class SpOutputAnsiStringFixed : Attribute
     {
         public int Length { get; set; }
 
-        public SpOutputAnsiStringFixedAttribute(int Length)
+        public SpOutputAnsiStringFixed(int Length)
         {
             this.Length = Length;
         }
@@ -62,13 +62,13 @@ namespace Dapper.BaseRepository.Attributes
     /// Attribute for DbType <see cref="DbType.Int32"/>
     /// </summary>
     [AttributeUsage(AttributeTargets.Property)]
-    public class SpOutputIntAttribute : Attribute { }
+    public class SpOutputInt : Attribute { }
 
     /// <summary>
     /// Attribute for DbType <see cref="DbType.Int64"/>
     /// </summary>
     [AttributeUsage(AttributeTargets.Property)]
-    public class SpOutputBigIntAttribute : Attribute { }
+    public class SpOutputBigInt : Attribute { }
 
     /// <summary>
     /// Attribute for DbType <see cref="DbType.DateTime"/>
