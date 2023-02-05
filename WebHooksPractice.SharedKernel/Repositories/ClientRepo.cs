@@ -6,7 +6,7 @@ using WebHooks.SharedKernel.Repositories.Interfaces;
 
 namespace WebHooks.SharedKernel.Repositories
 {
-    public class ClientRepo : BaseRepository<ClientRepo, AppLogger<ClientRepo>>, IClientRepo
+    public class ClientRepo : BaseRepository<ClientRepo, IAppLogger<ClientRepo>>, IClientRepo
     {
         public ClientRepo(IAppLogger<ClientRepo> logger) : base(logger)
         {
@@ -36,7 +36,7 @@ VALUES (@ClientName, @HandlerUrl, @Id)";
 
         public async Task<Client> GetClient(Guid clientId)
         {
-            var resp = await RunStoredProcedure<GetClientParam, GetClientOutputParam>("GetClient", new GetClientParam { clientId = clientId });
+            var resp = await RunStoredProcedure<GetClientParam, GetClientOutputParam>("GetClient", new GetClientParam { clientId = clientId }, DbType.SqlServer);
             if (resp == null)
                 throw new ClientDoesNotExistException();
 

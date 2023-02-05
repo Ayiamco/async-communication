@@ -2,7 +2,7 @@
 
 namespace WebHooks.SharedKernel.Infrastructure
 {
-    public interface IAppLogger<TRepo> : IBaseRepositoryLogger<TRepo>
+    public interface IAppLogger<TRepo> : IRepositoryLogger<TRepo>
     {
     }
 }

@@ -1,6 +1,8 @@
-﻿namespace Dapper.Repository.interfaces
+﻿using Microsoft.Extensions.Logging;
+
+namespace Dapper.Repository.interfaces
 {
-    public interface IBaseRepositoryLogger<TRepo>
+    public interface IRepositoryLogger<TRepo> : ILogger<TRepo>
     {
         void LogInformation(string message);
 

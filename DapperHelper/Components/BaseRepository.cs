@@ -364,12 +364,12 @@
         #endregion
     }
 
-    public abstract class BaseRepository<TRepo, TLogger> where TLogger : IBaseRepositoryLogger<TRepo> where TRepo : class
+    public abstract class BaseRepository<TRepo, TLogger> where TLogger : IRepositoryLogger<TRepo> where TRepo : class
     {
-        protected readonly IBaseRepositoryLogger<TRepo> logger;
+        protected readonly IRepositoryLogger<TRepo> logger;
         protected readonly Dictionary<DbType, Func<string, string, object?, int>> CommandsMap;
 
-        protected BaseRepository(IBaseRepositoryLogger<TRepo> logger)
+        protected BaseRepository(IRepositoryLogger<TRepo> logger)
         {
             this.logger = logger;
             CommandsMap = new()
@@ -734,7 +734,7 @@
                     throw new NullReferenceException("ConnectionStrings.SqlServerConnection is null, please set a default value for sqlserver connection.");
 
                 DapperOrmExecutor.ExecuteCommandProc(storedProcedureName, ConnectionStrings.SqlServerConnection, dynamicParameters);
-                return Task.FromResult(GetStoredProcedureResult<TResult>(dynamicParameters));
+                return Task.FromResult(BaseUtility.GetStoredProcedureResult<TResult>(dynamicParameters));
             }
             catch (Exception ex)
             {
@@ -752,7 +752,7 @@
         /// <param name="dbType">The database type.</param>
         /// <param name="callerMemberName">The name of the calling function. (used for logging)</param>
         /// <returns></returns>
-        protected Task<DynamicParameters> RunStoredProcedure<TInputParam>(string storedProcedureName, TInputParam paramObject, DbType dbType,
+        protected Task<TResult> RunStoredProcedure<TInputParam, TResult>(string storedProcedureName, TInputParam paramObject, DbType dbType,
              [CallerMemberName] string callerMemberName = "")
         {
             try
@@ -776,12 +776,12 @@
                         DapperOrmExecutor.ExecuteOracleCommandProc(storedProcedureName, connectionString, dynamicParameters);
                         break;
                 }
-                return Task.FromResult(dynamicParameters);
+                return Task.FromResult(BaseUtility.GetStoredProcedureResult<TResult>(dynamicParameters));
             }
             catch (Exception ex)
             {
                 logger.LogError(BaseUtility.GetLogMessage($"{callerMemberName}/{storedProcedureName}", ex));
-                return Task.FromResult(new DynamicParameters());
+                return Task.FromResult(Activator.CreateInstance<TResult>());
             }
         }
 
