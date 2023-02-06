@@ -16,6 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\DapperBaseRepo\Dapper.BaseRepository.csproj" />
     <ProjectReference Include="..\WebHooksPractice.SharedKernel\WebHooks.SharedKernel.csproj" />
   </ItemGroup>
 </Project>
